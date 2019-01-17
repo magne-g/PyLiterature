@@ -8,6 +8,9 @@ import csv
 
 base_url = "https://www.finn.no/car/used/search.html"
 details_url = "https://www.finn.no/car/used/ad.html?finnkode="
+xpath_common = "/html/body/main/div[3]/div[1]/div/section["
+xpath_text = "]/dl/dt["
+xpath_value = "]/dl/dd["
 pagination_url = base_url + "?page="
 pagination_start_value = 2
 pagination_end_value = 1000
@@ -18,7 +21,6 @@ chrome_options = webdriver.ChromeOptions()
 browser = webdriver.Chrome(chrome_options=chrome_options)
 browser.set_window_size(360, 640)
 browser.get(base_url)
-n = 0
 
 for y in range(pagination_start_value, pagination_end_value):
     print(y)
@@ -46,9 +48,6 @@ for y in range(pagination_start_value, pagination_end_value):
         except NoSuchElementException:
             model = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/div[4]/h1").text
 
-        #feature_list = browser.find_elements_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl")
-
-        #for feature in feature_list:
         model_year = ""
         first_reg = ""
         km = ""
@@ -61,38 +60,37 @@ for y in range(pagination_start_value, pagination_end_value):
         for x in range(2, 5):
             for i in range(1, 15):
                 try:
-                    if "Årsmodell" in browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dt["+str(i)+"]").text:
-                        model_year = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dd["+str(i)+"]").text
+                    if "Årsmodell" in browser.find_element_by_xpath(xpath_common+str(x)+xpath_text+str(i)+"]").text:
+                        model_year = browser.find_element_by_xpath(xpath_common+str(x)+xpath_value+str(i)+"]").text
                         continue
-                    if "gang registrert" in browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dt["+str(i)+"]").text:
-                        first_reg = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dd["+str(i)+"]").text
+                    if "gang registrert" in browser.find_element_by_xpath(xpath_common+str(x)+xpath_text+str(i)+"]").text:
+                        first_reg = browser.find_element_by_xpath(xpath_common+str(x)+xpath_value+str(i)+"]").text
                         continue
-                    if "Km.stand" in browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dt["+str(i)+"]").text:
-                        km = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dd["+str(i)+"]").text
+                    if "Km.stand" in browser.find_element_by_xpath(xpath_common+str(x)+xpath_text+str(i)+"]").text:
+                        km = browser.find_element_by_xpath(xpath_common+str(x)+xpath_value+str(i)+"]").text
                         continue
-                    if "Farge" in browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dt["+str(i)+"]").text:
-                        color = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dd["+str(i)+"]").text
+                    if "Farge" in browser.find_element_by_xpath(xpath_common+str(x)+xpath_text+str(i)+"]").text:
+                        color = browser.find_element_by_xpath(xpath_common+str(x)+xpath_value+str(i)+"]").text
                         continue
-                    if "Girkasse" in browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dt["+str(i)+"]").text:
-                        gear = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dd["+str(i)+"]").text
+                    if "Girkasse" in browser.find_element_by_xpath(xpath_common+str(x)+xpath_text+str(i)+"]").text:
+                        gear = browser.find_element_by_xpath(xpath_common+str(x)+xpath_value+str(i)+"]").text
                         continue
-                    if "Hjuldrift" in browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dt["+str(i)+"]").text:
-                        hjuldrift = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dd["+str(i)+"]").text
+                    if "Hjuldrift" in browser.find_element_by_xpath(xpath_common+str(x)+xpath_text+str(i)+"]").text:
+                        hjuldrift = browser.find_element_by_xpath(xpath_common+str(x)+xpath_value+str(i)+"]").text
                         continue
-                    if "Drivstoff" in browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dt["+str(i)+"]").text:
-                        drivstoff = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dd["+str(i)+"]").text
+                    if "Drivstoff" in browser.find_element_by_xpath(xpath_common+str(x)+xpath_text+str(i)+"]").text:
+                        drivstoff = browser.find_element_by_xpath(xpath_common+str(x)+xpath_value+str(i)+"]").text
                         continue
-                    if "Effekt" in browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dt["+str(i)+"]").text:
-                        effekt = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dd["+str(i)+"]").text
+                    if "Effekt" in browser.find_element_by_xpath(xpath_common+str(x)+xpath_text+str(i)+"]").text:
+                        effekt = browser.find_element_by_xpath(xpath_common+str(x)+xpath_value+str(i)+"]").text
                         continue
-                    if "Sylindervolum" in browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dt["+str(i)+"]").text:
-                        sylindervolum = browser.find_element_by_xpath("/html/body/main/div[3]/div[1]/div/section["+str(x)+"]/dl/dd["+str(i)+"]").text
+                    if "Sylindervolum" in browser.find_element_by_xpath(xpath_common+str(x)+xpath_text+str(i)+"]").text:
+                        sylindervolum = browser.find_element_by_xpath(xpath_common+str(x)+xpath_value+str(i)+"]").text
                         continue
                 except NoSuchElementException:
                     pass
-        car = Car(price, model, model_year, first_reg, km, color, gear, hjuldrift, drivstoff, effekt, sylindervolum, e)
 
-        #cars.append(car)
+        car = Car(price, model, model_year, first_reg, km, color, gear, hjuldrift, drivstoff, effekt, sylindervolum, e)
 
         df = pd.DataFrame.from_records([car.to_dict()])
         with open('cars.csv', 'a') as f:
