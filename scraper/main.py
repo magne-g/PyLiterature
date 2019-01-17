@@ -18,6 +18,7 @@ chrome_options = webdriver.ChromeOptions()
 browser = webdriver.Chrome(chrome_options=chrome_options)
 browser.set_window_size(360, 640)
 browser.get(base_url)
+n = 0
 
 for y in range(pagination_start_value, pagination_end_value):
     print(y)
@@ -89,13 +90,15 @@ for y in range(pagination_start_value, pagination_end_value):
                         continue
                 except NoSuchElementException:
                     pass
+        car = Car(price, model, model_year, first_reg, km, color, gear, hjuldrift, drivstoff, effekt, sylindervolum, e)
 
-        cars.append(Car(price, model, model_year, first_reg, km, color, gear, hjuldrift, drivstoff, effekt, sylindervolum, e))
+        #cars.append(car)
 
-    df = pd.DataFrame.from_records([car.to_dict() for car in cars])
-    print(df)
+        df = pd.DataFrame.from_records([car.to_dict()])
+        with open('cars.csv', 'a') as f:
+            df.to_csv(f, header=f.tell() == 0, index=0)
 
-    df.to_csv('cars.csv', mode='a')
+
 
     browser.get(pagination_url+str(y)) #Next page
 
