@@ -12,7 +12,7 @@ xpath_common = "/html/body/main/div[3]/div[1]/div/section["
 xpath_text = "]/dl/dt["
 xpath_value = "]/dl/dd["
 pagination_url = base_url + "?page="
-pagination_start_value = 2
+pagination_start_value = 242
 pagination_end_value = 1000
 ads_per_page = 50
 
