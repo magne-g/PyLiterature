@@ -109,7 +109,7 @@ Boxplot manufacturer/price:
 
 ![Boxplot](https://raw.githubusercontent.com/magne-g/ML-Project1/master/charts/boxplot-manufacturer-price.png)
 
-###Discussion
+##Discussion
 
 In the statistical data we can observe max values that would qualify as extreme outliers, such as 'cylinder' which specifies engine size in liters. The high mean may indicate that this is not the only outlier and may be instances where volume is represented in milliliters instead of liters. Further preprocessing is needed here.
 
