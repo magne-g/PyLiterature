@@ -93,7 +93,7 @@ for y in range(pagination_start_value, pagination_end_value):
         car = Car(price, model, model_year, first_reg, km, color, gear, hjuldrift, drivstoff, effekt, sylindervolum, e)
 
         df = pd.DataFrame.from_records([car.to_dict()])
-        with open('cars.csv', 'a') as f:
+        with open('../cars.csv', 'a') as f:
             df.to_csv(f, header=f.tell() == 0, index=0)
 
 

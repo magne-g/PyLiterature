@@ -7,6 +7,7 @@ import csv
 
 pd.options.mode.chained_assignment = None
 
+
 def pp_trans(dataframe): #Truncates (FWD, RWD, AWD) transmission layouts
     trans = dataframe['trans']
 
@@ -82,19 +83,12 @@ def pp_model(dataframe): #Seperate manufacturer from model
 
     split = model.str.split(' ', n=1, expand=True)
 
-
     dataframe['model'] = split[1]
     dataframe['manufacturer'] = split[0]
-
 
     #print(dataframe.model)
 
     return dataframe
-
-
-
-
-
 
 
 if len(sys.argv) != 2 or '.csv' not in sys.argv[1]:
@@ -102,7 +96,7 @@ if len(sys.argv) != 2 or '.csv' not in sys.argv[1]:
 
 f = sys.argv[1]
 
-df = pd.read_csv(f)
+df = pd.read_csv('../' + f)
 n_original = len(df)
 df = df.drop_duplicates()
 n_duplicates = n_original - len(df)
@@ -121,14 +115,24 @@ new_columns = ['model_year','manufacturer', 'model', 'km', 'power', 'gear', 'tra
 
 df = df.reindex(columns=new_columns)
 
-print(df)
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 500)
+pd.set_option('display.max_colwidth', -1)
+pd.set_option('display.max_info_columns', 500)
+
+df = df.drop(columns='color')
+
+#for e in list:
+#    print(e)
 
 print('raw rows: ' + str(n_original))
 print('duplicates removed: ' + str(n_duplicates))
 print('final rows: ' + str(len(df)))
 
 
-df.to_csv('processed_' + f)
+
+df.to_csv('../processed_' + f)
 
 
 
