@@ -107,6 +107,7 @@ price       0.089757   0.570921   -0.503956  0.658121  0.578710  -0.170694  1.00
 
 Boxplot manufacturer/price:
 
+![Boxplot](https://raw.githubusercontent.com/magne-g/ML-Project1/master/charts/boxplot-manufacturer-price.png)
 
 ###Discussion
 
@@ -121,5 +122,6 @@ Correlation data shows:
  - Moderate/strong positive correlation between price and metric horse power
  - Strong negative correlation between production year and mileage
  
+ Boxplot showing manufacturers and price reveal potential outliers that may need further attention. 
  
 
