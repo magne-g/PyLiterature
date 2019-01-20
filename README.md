@@ -24,11 +24,11 @@ Cleaning the data involves methods such as:
 - Properly format continous values such as price and mileage.
 - Attempt to sanitize and categorize deviating attribute values
 
-##Preprocessing
+## Preprocessing
 
 During the first stage of preprocessing, we had the goal of formatting the raw data to prepare it for computational analysis while still preserving human readability. We used python and pandas to preprocess the data.
 
-###Steps
+### Steps
 
 - Designate finn_code as index (unique identifier)
 
@@ -59,7 +59,7 @@ include_manufacturers = ['Audi', 'BMW', 'Citroen', 'Fiat', 'Ford', 'Hyundai', 'K
 
 - Reorder columns for human readability
 
-##Analysis
+## Analysis
 
 Total non-null values:
 
@@ -109,7 +109,7 @@ Boxplot manufacturer/price:
 
 ![Boxplot](https://raw.githubusercontent.com/magne-g/ML-Project1/master/charts/boxplot-manufacturer-price.png)
 
-##Discussion
+## Discussion
 
 In the statistical data we can observe max values that would qualify as extreme outliers, such as 'cylinder' which specifies engine size in liters. The high mean may indicate that this is not the only outlier and may be instances where volume is represented in milliliters instead of liters. Further preprocessing is needed here.
 
