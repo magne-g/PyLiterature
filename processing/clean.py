@@ -3,6 +3,9 @@ import numpy as np
 import sys
 import csv
 
+#Prepare raw data for regression but preserve human readability for now.
+
+pd.options.mode.chained_assignment = None
 
 def pp_trans(dataframe): #Truncates (FWD, RWD, AWD) transmission layouts
     trans = dataframe['trans']
@@ -40,7 +43,7 @@ def pp_power(dataframe): #Converts metric horse power to floats and NaN
     power = dataframe['power']
 
     power = power.str.replace('(hk| +)', '', regex=True, case=False)
-    power = pd.to_numeric(power, errors='raise').astype(int)
+    power = pd.to_numeric(power, errors='coerce')
 
     dataframe['power'] = power
     return dataframe
@@ -49,7 +52,7 @@ def pp_km(dataframe): #Converts mileage to floats and NaN
     km = dataframe['km']
 
     km = km.str.replace('(km| +)', '', regex=True, case=False)
-    km = pd.to_numeric(km, errors='raise')
+    km = pd.to_numeric(km, errors='coerce')
 
     dataframe['km'] = km
     return dataframe
@@ -72,9 +75,22 @@ def pp_cylinder(dataframe):
 
 def pp_model(dataframe): #Seperate manufacturer from model
 
+    manufacturers = ['Audi', 'BMW', 'Citroen', 'Fiat', 'Ford', 'Hyundai', 'Kia', 'Mazda', 'Mercedes-Benz', 'Mitsubishi', 'Nissan', 'Opel', 'Peugeot', 'Renault', 'Skoda', 'Subaru', 'Suzuki', 'Toyota', 'Volkswagen', 'Volvo', 'Tesla']
+
+    dataframe = dataframe[dataframe.model.str.contains('|'.join(manufacturers))]
     model = dataframe['model']
 
-    manufacturers = ['Audi', 'BMW', 'Citroen', 'Fiat', 'Ford', 'Hyundai', 'Kia', 'Mazda', 'Mercedes-Benz', 'Mitsubishi', 'Nissan', 'Opel', 'Peugot', 'Renault', 'Skoda', 'Subaru', 'Suzuki', 'Toyota', 'Volkswagen', 'Volvo']
+    split = model.str.split(' ', n=1, expand=True)
+
+
+    dataframe['model'] = split[1]
+    dataframe['manufacturer'] = split[0]
+
+
+    #print(dataframe.model)
+
+    return dataframe
+
 
 
 
@@ -87,7 +103,9 @@ if len(sys.argv) != 2 or '.csv' not in sys.argv[1]:
 f = sys.argv[1]
 
 df = pd.read_csv(f)
+n_original = len(df)
 df = df.drop_duplicates()
+n_duplicates = n_original - len(df)
 df = df.set_index('finn_code')
 
 df = pp_trans(df)
@@ -97,9 +115,18 @@ df = pp_power(df)
 df = pp_km(df)
 df = pp_first_reg(df)
 df = pp_cylinder(df)
+df = pp_model(df)
 
-#print(df['first_reg'].unique())
-print(len(df))
+new_columns = ['model_year','manufacturer', 'model', 'km', 'power', 'gear', 'trans', 'first_reg', 'cylinder', 'color', 'fuel_type', 'price']
+
+df = df.reindex(columns=new_columns)
+
+print(df)
+
+print('raw rows: ' + str(n_original))
+print('duplicates removed: ' + str(n_duplicates))
+print('final rows: ' + str(len(df)))
+
 
 df.to_csv('processed_' + f)
 
