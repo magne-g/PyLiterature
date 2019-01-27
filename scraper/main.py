@@ -12,8 +12,8 @@ xpath_common = "/html/body/main/div[3]/div[1]/div/section["
 xpath_text = "]/dl/dt["
 xpath_value = "]/dl/dd["
 pagination_url = base_url + "?page="
-pagination_start_value = 242
-pagination_end_value = 1000
+pagination_start_value = 1
+pagination_end_value = 5
 ads_per_page = 50
 
 chrome_options = webdriver.ChromeOptions()
@@ -93,7 +93,7 @@ for y in range(pagination_start_value, pagination_end_value):
         car = Car(price, model, model_year, first_reg, km, color, gear, hjuldrift, drivstoff, effekt, sylindervolum, e)
 
         df = pd.DataFrame.from_records([car.to_dict()])
-        with open('../cars.csv', 'a') as f:
+        with open('../cars_test.csv', 'a') as f:
             df.to_csv(f, header=f.tell() == 0, index=0)
 
 
