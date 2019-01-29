@@ -2,14 +2,16 @@ import pandas as pd
 import numpy as np
 import sklearn as s
 from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.ensemble import RandomForestRegressor, BaggingRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeRegressor
+
+from sklearn.ensemble import AdaBoostRegressor
 
 from matplotlib import pyplot as plt
 from sklearn import preprocessing
 from sklearn.externals.six import StringIO
 import seaborn as sns
-import pydot
 from sklearn import metrics
 
 pd.set_option('display.max_rows', 500)
@@ -51,12 +53,17 @@ def preprocess(data):
     data['price'] = data['price'].astype(np.float)
     data['price'] = np.round(data['price'], -3)
     data['price'] = np.divide(data['price'], 1000)
+    
+
+    data['km'] = data['km'].astype(np.float)
+    data['km'] = np.round(data['km'], -3)
+    data['km'] = np.divide(data['km'], 1000)
 
     data = data[data.price < 750]
     data = data[data.price > 15]
     data = data[data.cylinder > 0]
     data = data[data.cylinder < 10]
-    data = data[data.km < 300000]
+    data = data[data.km < 300]
     data = data[data.power < 500]
     data = data[data.power > 0]
 
@@ -104,7 +111,10 @@ print(X_test.shape, Y_test.shape)
 
 #tree = AdaBoostRegressor(DecisionTreeRegressor(criterion='mse'), n_estimators=150, random_state=rng)
 
-tree = GridSearchCV(DecisionTreeRegressor(max_depth=10, max_features=6, min_weight_fraction_leaf=0.001, max_leaf_nodes=326), param_grid={'presort': [True, False]}, cv=7)
+#tree = AdaBoostRegressor(DecisionTreeRegressor(), n_estimators=20, random_state=rng)
+
+tree = AdaBoostRegressor(RandomForestRegressor(random_state=rng), n_estimators=30, random_state=rng)
+
 
 model = tree.fit(X_train, Y_train)
 
@@ -129,12 +139,12 @@ ax = sns.regplot(Y_test, predictions, fit_reg=True)
 ax.set(xlabel='True price in NOK/1000', ylabel='Predicted price in NOK/1000')
 
 #model.decision_path(validation_data.sample(1))
-print(model.cv_results_)
+#print(model.cv_results_)
 
-print("Best Estimator:", model.best_estimator_)
-print("Best Index: ", model.best_index_)
-print("Best Params: ", model.best_params_)
-print("Best Score: ", model.best_score_)
+#print("Best Estimator:", model.best_estimator_)
+#print("Best Index: ", model.best_index_)
+#print("Best Params: ", model.best_params_)
+#print("Best Score: ", model.best_score_)
 
 
 plt.show()
