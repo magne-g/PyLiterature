@@ -19,6 +19,14 @@ from datetime import date
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+
+#Settings
+
+_print_unprocessed_dataset_stats = False
+_print_processed_dataset_stats = False
+_verbose = 1
+
+
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 500)
@@ -29,26 +37,15 @@ dot_data = StringIO()
 rng = np.random.RandomState(2)
 
 
+
 def frange(x, y, jump):
     while x < y:
         yield x
         x += jump
 
-def result(scores, model, i, param_score, label, predictions):
-    #print("Params: ", model.get_params())
-    print('Tuned param: ', i)
-    print("Accuracy: %0.3f (+/- %0.3f)" % (scores.mean(), scores.std() * 2))
-    if(scores.mean() > best_param_score[0]):
-        best_param_score[0] = scores.mean()
-        best_param_score[1] = i
-        print(best_param_score)
-
-
-
-    # s.tree.export_graphviz(model, out_file=dot_data)
-
+def result(scores, model, param_score, label, predictions):
+    print("Accuracy: %0.4f (+/- %0.3f)" % (scores.mean(), scores.std() * 2))
     ax = sns.regplot(Y_test, predictions, fit_reg=True)
-
     ax.set(xlabel='True price in NOK/1000', ylabel='Predicted price in NOK/1000')
 
 
@@ -60,6 +57,10 @@ def pandas_encoding(data):
     data['fuel_type'] = data['fuel_type'].astype('category').cat.codes
     return data
 
+def print_dataset_stats(data):
+    print(data.describe())
+    print(data.count())
+    print(data.corr())
 
 def label_encode(data):
     le = preprocessing.LabelEncoder()
@@ -71,8 +72,15 @@ def label_encode(data):
 
     return data
 
+
 #TODO Move preprocessing
 def preprocess(data):
+
+    if _print_unprocessed_dataset_stats:
+        print('Unprocessed Dataset Statistics:')
+        print_dataset_stats(data)
+
+
     data = data.set_index('finn_code')
     data['price'] = data['price'].astype(np.float)
     data['price'] = np.round(data['price'], -3)
@@ -100,101 +108,94 @@ def preprocess(data):
     # Dropping rows with null in one or more attribute:
     #data = data.sample(3000)
     #data['cylinder'] = data['cylinder'].fillna(data.cylinder.mean())
-    print(data)
     data = data.dropna()
     #data = data.sort_values(by=['km'], axis=0)
-
     label_encode(data)
 
-
-
-    print(data.describe())
-    print(data.count())
-    print(data.corr())
+    if _print_processed_dataset_stats:
+        print('Processed Dataset Statistics:')
+        print_dataset_stats(data)
 
     return data
 
 def tune_parameter(param, value, data):
     tuned_data = data[data[param] < value]
     print('Evaluating parameter "' + param + ' with value: ', value)
+
     return tuned_data
 
 best_param_score = [0.0,0.0]
 
-def process_and_label(data):
+def process_and_label(data, dependant_variable):
+
     data.index = data.index.astype(int)  # use astype to convert to int
-
+    pre_count = len(data)
     data = preprocess(data)
-
+    label = data[dependant_variable.name]
+    data = data.drop(columns=label.name)
     data.to_csv('../labeled_cars.csv')
+    post_count = len(data)
+    if(_verbose > 0):
+        print('{0:.0f}% of data rows dropped in processing...'.format(100 - (post_count/pre_count * 100)))
+    return data, label
 
-    return data
+def split_data(data, label, test_size=0.2):
 
-for i in range(1):
-    data = pd.read_csv('../processed_cars.csv')
+    X_train, X_test, Y_train, Y_test = train_test_split(data,
+                                                        label,
+                                                        test_size=test_size,
+                                                        random_state=rng)
+    return X_train, X_test, Y_train, Y_test
 
+def define_estimator():
+    estimator = AdaBoostRegressor(RandomForestRegressor(random_state=rng,
+                                                        n_estimators=30,
+                                                        n_jobs=8),
+                                  random_state=rng,
+                                  n_estimators=5)
+
+    return estimator
+
+
+def fit_model(X_train, Y_train, estimator):
+
+    model = estimator.fit(X_train, Y_train)
+
+    return model
+
+def load_dataset(filename):
+    data = pd.read_csv(filename)
+    if(_verbose > 0):
+        print('Loaded {count} rows of data from {filename}'.format(count=len(data), filename=filename))
     data_orig = data
-
-    data = process_and_label(data)
-
-
-
-    #data = tune_parameter('power', i, data)
-
-    label = data['price']
-
-    data = data.drop(columns=['price'])
-    #validation_data = validation_data.drop(columns=['price'])
-
-    # data = data.drop(columns=['finn_code'])
-    # data = data.drop(columns=['gear'])
-    # data = data.drop(columns=['manufacturer'])
-    # data = data.drop(columns=['trans'])
-    # data = data.drop(columns=['cylinder'])
-    # data = data.drop(columns=['first_reg'])
-    # data = data.drop(columns=['model'])
-    # data = data.drop(columns=['km'])
-
-
-
-    X_train, X_test, Y_train, Y_test = train_test_split(data, label, test_size=0.2)
-
-    tree = AdaBoostRegressor(RandomForestRegressor(random_state=rng, n_estimators=30, n_jobs=8), random_state=rng,n_estimators=5)
-
-    #print(X_train)
+    return data, data_orig
 
 
 
 
-    model = tree.fit(X_train, Y_train)
+data, data_orig = load_dataset('../processed_cars.csv')
 
-    scores = cross_val_score(model, X_test, Y_test, cv=3)
+data, label = process_and_label(data, dependant_variable=data['price'])
 
-    predictions = cross_val_predict(model, X_test, Y_test, cv=3)
+if(len(data) != len(label)):
+    print(len(data), len(label))
+    assert(len(data) == len(label), 'Error: Length not equal in X, Y')
 
-    #predictions = tree.predict(X_test)
+X_train, X_test, Y_train, Y_test = split_data(data, label)
 
-    # scores = cross_validate(model, data, label, cv=15)
+estimator = define_estimator()
 
-    # print("Feature importance: ", model.feature_importances_)
+model = fit_model(X_train, Y_train, estimator=estimator)
 
+scores = cross_val_score(model, X_test, Y_test, cv=3)
 
-    # model.decision_path(validation_data.sample(1))
-    # print(model.cv_results_)
+predictions = model.predict(X_test)
 
-    # print("Best Estimator:", model.best_estimator_)
-    # print("Best Index: ", model.best_index_)
-    # print("Best Params: ", model.best_params_)
-    # print("Best Score: ", model.best_score_)
+result(scores, model, best_param_score, label, predictions)
 
-
-
-    result(scores, model, i, best_param_score, label, predictions)
-
-    plt.show()
+plt.show()
 
 
-#print("Highest accuracy: (%0.3f) on parameter value: %0d" % (best_param_score[0], best_param_score[1]))
 
 
 
