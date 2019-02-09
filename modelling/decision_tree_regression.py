@@ -10,6 +10,8 @@ from sklearn.ensemble import AdaBoostRegressor, ExtraTreesRegressor
 from matplotlib import pyplot as plt
 from sklearn import preprocessing
 from sklearn.externals.six import StringIO
+from sklearn import preprocessing
+from sklearn.decomposition import PCA
 import seaborn as sns
 from sklearn import svm
 from sklearn import metrics
@@ -45,7 +47,7 @@ def result(scores, model, i, param_score, label, predictions):
 
     # s.tree.export_graphviz(model, out_file=dot_data)
 
-    ax = sns.regplot(label, predictions, fit_reg=True)
+    ax = sns.regplot(Y_test, predictions, fit_reg=True)
 
     ax.set(xlabel='True price in NOK/1000', ylabel='Predicted price in NOK/1000')
 
@@ -69,7 +71,7 @@ def label_encode(data):
 
     return data
 
-
+#TODO Move preprocessing
 def preprocess(data):
     data = data.set_index('finn_code')
     data['price'] = data['price'].astype(np.float)
@@ -144,25 +146,6 @@ for i in range(1):
 
     X_train, X_test, Y_train, Y_test = train_test_split(data, label, test_size=0.2)
 
-
-
-    """
-    from sklearn.decomposition import PCA
-    pca = PCA(n_components = None)
-    X_train = pca.fit_transform(X_train)
-    X_test = pca.transform(X_test)
-    explained_variance = pca.explained_variance_ratio_
-    """
-    """
-    pca = PCA(n_components=None)
-    X_train = pca.fit_transform(X_train)
-    X_test = pca.transform(X_test)
-    explained_variance = pca.explained_variance_ratio_
-    """
-
-   # X_train = data.fit_transform(X_train)
-   # X_test = data.transform(X_test)
-
     tree = AdaBoostRegressor(RandomForestRegressor(random_state=rng, n_estimators=30, n_jobs=8), random_state=rng,n_estimators=5)
 
     print(X_train)
@@ -170,9 +153,9 @@ for i in range(1):
 
     model = tree.fit(X_train, Y_train)
 
-    scores = cross_val_score(model, data, label, cv=3)
+    scores = cross_val_score(model, X_test, Y_test, cv=3)
 
-    predictions = cross_val_predict(model, data, label)
+    predictions = cross_val_predict(model, X_test, Y_test)
 
     #predictions = tree.predict(X_test)
 
