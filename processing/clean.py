@@ -4,6 +4,13 @@ import csv
 
 #Prepare raw data for regression but preserve human readability for now.
 
+#TODO Feature engineering
+#Five year guarantee
+#Four year EU control exclusion
+#Eletric, Nonelectric
+#
+#
+
 pd.options.mode.chained_assignment = None
 
 
@@ -75,7 +82,10 @@ def pp_cylinder(dataframe):
 
 def pp_model(dataframe): #Seperate manufacturer from model
 
-    manufacturers = ['Audi', 'BMW', 'Citroen', 'Fiat', 'Ford', 'Hyundai', 'Kia', 'Mazda', 'Mercedes-Benz', 'Mitsubishi', 'Nissan', 'Opel', 'Peugeot', 'Renault', 'Skoda', 'Subaru', 'Suzuki', 'Toyota', 'Volkswagen', 'Volvo', 'Tesla']
+
+    manufacturers = ['Chevrolet', 'Dodge', 'Honda', 'Isuzu', 'Jaguar', 'Lexus', 'MINI','Porsche', 'Skoda', 'Ssangyong', 'Saab','Audi',
+                     'BMW', 'Citroen', 'Fiat', 'Ford', 'Hyundai', 'Kia', 'Mazda', 'Mercedes-Benz', 'Mitsubishi',
+                     'Nissan', 'Opel', 'Peugeot', 'Renault', 'Skoda', 'Subaru', 'Suzuki', 'Toyota', 'Volkswagen', 'Volvo', 'Tesla']
 
     dataframe = dataframe[dataframe.model.str.contains('|'.join(manufacturers))]
     model = dataframe['model']

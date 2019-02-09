@@ -15,6 +15,7 @@ from sklearn.decomposition import PCA
 import seaborn as sns
 from sklearn import svm
 from sklearn import metrics
+from datetime import date
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -83,11 +84,13 @@ def preprocess(data):
     data = data[data.price < 950]
     data = data[data.price > 15]
     data = data[(((data.model_year >= 2017) & (data.price > 15)) | (data.model_year < 2017))]
-    data.loc[data.cylinder > 10, 'cylinder'] = np.round(data.cylinder / 1000)
-    data.loc[data.fuel_type == 'Elektrisitet', 'cylinder'] = 3
+    data.loc[data.cylinder > 10, 'cylinder'] = np.round(data.cylinder/1000)
+    data.loc[data.fuel_type == 'Elektrisitet', 'cylinder'] = 0
     data = data[data.km < 290]
     data = data[data.power > 0]
     data = data[data.power < 500]
+
+    data['model_year'] = date.today().year - data['model_year']
 
     indices = data[(data['fuel_type'] == 'Diesel') & (data['cylinder'] == 0)].index
     data.drop(indices, inplace=True)
@@ -95,6 +98,9 @@ def preprocess(data):
     data.drop(indices, inplace=True)
     data = data.drop(columns=['first_reg'])
     # Dropping rows with null in one or more attribute:
+    #data = data.sample(3000)
+    #data['cylinder'] = data['cylinder'].fillna(data.cylinder.mean())
+    print(data)
     data = data.dropna()
     #data = data.sort_values(by=['km'], axis=0)
 
@@ -121,11 +127,6 @@ def process_and_label(data):
     data = preprocess(data)
 
     data.to_csv('../labeled_cars.csv')
-
-    #data['index'] = data[data.index]
-
-    #index = data['finn_code'].astype(int)
-
 
     return data
 
@@ -160,7 +161,7 @@ for i in range(1):
 
     tree = AdaBoostRegressor(RandomForestRegressor(random_state=rng, n_estimators=30, n_jobs=8), random_state=rng,n_estimators=5)
 
-    print(X_train)
+    #print(X_train)
 
 
 
