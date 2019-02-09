@@ -41,8 +41,7 @@ def result(scores, model, i, param_score, label, predictions):
         best_param_score[0] = scores.mean()
         best_param_score[1] = i
         print(best_param_score)
-    print(validation_data)
-    print(model.predict(validation_data))
+
 
 
     # s.tree.export_graphviz(model, out_file=dot_data)
@@ -103,9 +102,9 @@ def preprocess(data):
 
 
 
-    #print(data.describe())
-    #print(data.count())
-    #print(data.corr())
+    print(data.describe())
+    print(data.count())
+    print(data.corr())
 
     return data
 
@@ -114,24 +113,37 @@ def tune_parameter(param, value, data):
     print('Evaluating parameter "' + param + ' with value: ', value)
     return tuned_data
 
-
-
 best_param_score = [0.0,0.0]
+
+def process_and_label(data):
+    data.index = data.index.astype(int)  # use astype to convert to int
+
+    data = preprocess(data)
+
+    data.to_csv('../labeled_cars.csv')
+
+    #data['index'] = data[data.index]
+
+    #index = data['finn_code'].astype(int)
+
+
+    return data
 
 for i in range(1):
     data = pd.read_csv('../processed_cars.csv')
-    validation_data = pd.read_csv('../processed_cars_test.csv')
 
     data_orig = data
 
-    data = preprocess(data)
-    validation_data = preprocess(validation_data)
+    data = process_and_label(data)
+
+
+
     #data = tune_parameter('power', i, data)
 
     label = data['price']
 
     data = data.drop(columns=['price'])
-    validation_data = validation_data.drop(columns=['price'])
+    #validation_data = validation_data.drop(columns=['price'])
 
     # data = data.drop(columns=['finn_code'])
     # data = data.drop(columns=['gear'])
@@ -151,11 +163,13 @@ for i in range(1):
     print(X_train)
 
 
+
+
     model = tree.fit(X_train, Y_train)
 
     scores = cross_val_score(model, X_test, Y_test, cv=3)
 
-    predictions = cross_val_predict(model, X_test, Y_test)
+    predictions = cross_val_predict(model, X_test, Y_test, cv=3)
 
     #predictions = tree.predict(X_test)
 
