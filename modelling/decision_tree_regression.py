@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import sklearn as s
+import os
 from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict
 from sklearn.ensemble import RandomForestRegressor, BaggingRegressor
 from sklearn.model_selection import GridSearchCV
@@ -42,7 +43,7 @@ pd.set_option('display.max_info_columns', 500)
 
 dot_data = StringIO()
 rng = np.random.RandomState(42)
-
+X_train, X_test, Y_train, Y_test = [0] * 4
 
 
 def frange(x, y, jump):
@@ -50,9 +51,9 @@ def frange(x, y, jump):
         yield x
         x += jump
 
-def result(scores, model, param_score, label, predictions):
+def result(scores, model, param_score, label, predictions, d):
     print("Accuracy: %0.4f (+/- %0.3f)" % (scores.mean(), scores.std() * 2))
-    ax = sns.regplot(Y_test, predictions, fit_reg=True)
+    ax = sns.regplot(d['y'], predictions, fit_reg=True)
     ax.set(xlabel='True price in NOK/1000', ylabel='Predicted price in NOK/1000')
 
 
@@ -165,7 +166,7 @@ def split_data(data, label, test_size=0.2):
                                                         random_state=rng)
     return X_train, X_test, Y_train, Y_test
 
-def define_estimator(_base_estimator, _meta_estimator, _tune_hyper_parameters):
+def define_estimator(d, _base_estimator, _meta_estimator, _tune_hyper_parameters):
 
     _estimator = _base_estimator
 
@@ -187,7 +188,7 @@ def define_estimator(_base_estimator, _meta_estimator, _tune_hyper_parameters):
 
         _cv = GridSearchCV(_base_estimator, param_grid=parameters, n_jobs=8, verbose=2, cv=3, scoring='neg_median_absolute_error', refit=True)
 
-        _cv.fit(X_train, Y_train)
+        _cv.fit(d['X'], d['Y'])
 
         print(_cv.cv_results_)
         print(_cv.best_params_)
@@ -213,36 +214,59 @@ def load_dataset(filename):
     data_orig = data
     return data, data_orig
 
+def run(filename, X, Y, x, y):
+
+    data, data_orig = load_dataset(filename)
 
 
+    data, label = process_and_label(data, dependant_variable=data['price'])
 
-data, data_orig = load_dataset('../processed_cars.csv')
+    if(len(data) != len(label)):
+        print(len(data), len(label))
+        assert len(data) == len(label), 'Error: Length not equal in X, Y'
 
-data, label = process_and_label(data, dependant_variable=data['price'])
+    X, x, Y, y = split_data(data, label)
 
-if(len(data) != len(label)):
-    print(len(data), len(label))
-    assert len(data) == len(label), 'Error: Length not equal in X, Y'
+    d = {'X': X, 'x': x, 'Y': Y, 'y': y}
 
-X_train, X_test, Y_train, Y_test = split_data(data, label)
 
-estimator = define_estimator(_base_estimator=RandomForestRegressor(random_state=rng),
-                             _meta_estimator=AdaBoostRegressor(n_estimators=5), _tune_hyper_parameters=True)
-
-model = fit_model(X_train, Y_train, estimator=estimator)
-
-scores = cross_val_score(model, X_test, Y_test, cv=3)
-
-predictions = model.predict(X_test)
-
-result(scores, model, best_param_score, label, predictions)
-
-save_accuracy_log(scores, estimator)
-
-plt.show()
-
-print(model.get_params())
+    estimator = define_estimator(d, RandomForestRegressor(random_state=rng), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
 
 
 
 
+    model = fit_model(X, Y, estimator=estimator)
+
+    scores = cross_val_score(model, d['x'], d['y'], cv=3)
+
+    predictions = model.predict(d['x'])
+
+    result(scores, model, best_param_score, label, predictions, d)
+
+    save_accuracy_log(scores, estimator)
+
+    plt.show()
+
+    print(model.get_params())
+
+
+
+
+
+
+cwd = os.getcwd()
+
+sub = cwd.split('/')
+
+
+
+print(cwd)
+sub = sub[:-1]
+print(sub)
+path = '/'.join(sub)
+path += '/'
+path += 'processed_cars.csv'
+print(path)
+
+
+run(path, X_train, Y_train, X_test, Y_test)
