@@ -14,11 +14,15 @@ from sklearn.externals.six import StringIO
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
 import seaborn as sns
+from sklearn.impute import SimpleImputer
+
 from sklearn import svm
 from sklearn import metrics
 from datetime import date
-from sklearn.model_selection import validation_curve, learning_curve
+from sklearn.model_selection import validation_curve, learning_curve, ShuffleSplit, KFold
 import warnings
+from IPython.core.interactiveshell import InteractiveShell
+InteractiveShell.ast_node_interactivity = "all"
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
@@ -35,11 +39,11 @@ _important_data = '{}'
 
 
 
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.max_columns', 500)
-pd.set_option('display.width', 500)
-pd.set_option('display.max_colwidth', -1)
-pd.set_option('display.max_info_columns', 500)
+#pd.set_option('display.max_rows', 500)
+#pd.set_option('display.max_columns', 500)
+#pd.set_option('display.width', 500)
+#pd.set_option('display.max_colwidth', -1)
+#pd.set_option('display.max_info_columns', 500)
 
 dot_data = StringIO()
 rng = np.random.RandomState(42)
@@ -95,7 +99,7 @@ def save_accuracy_log(scores, estimator):
 
 
 def preprocess(data):
-
+    data = data.drop(columns=['first_reg'])
     if _print_unprocessed_dataset_stats:
         print('Unprocessed Dataset Statistics:')
         print_dataset_stats(data)
@@ -107,15 +111,26 @@ def preprocess(data):
     data['km'] = data['km'].astype(np.float)
     data['km'] = np.round(data['km'], -3)
     data['km'] = np.divide(data['km'], 1000)
+
     data = data[data.model_year > 1985]
     data = data[data.price < 950]
     data = data[data.price > 15]
     data = data[(((data.model_year >= 2017) & (data.price > 15)) | (data.model_year < 2017))]
     data.loc[data.cylinder > 10, 'cylinder'] = np.round(data.cylinder/1000)
+    #data = data[data.cylinder < 7.0]
     data.loc[data.fuel_type == 'Elektrisitet', 'cylinder'] = 0
-    data = data[data.km < 290]
+    data = data[data.km < 350]
     data = data[data.power > 0]
     data = data[data.power < 500]
+    kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=40, strategy='uniform')
+    kbins.fit(data.loc[:, 'km'].values.reshape(-1,1))
+    data['km'] = kbins.transform(data.loc[:, 'km'].values.reshape(-1, 1))
+    power_transform = preprocessing.PowerTransformer('box-cox')
+    power_transform.fit(data.loc[:, 'price'].values.reshape(-1, 1))
+    data['price'] = power_transform.transform(data.loc[:, 'price'].values.reshape(-1, 1))
+    #kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=250, strategy='uniform')
+    #kbins.fit(data.loc[:, 'price'].values.reshape(-1, 1))
+    #data['price'] = kbins.transform(data.loc[:, 'price'].values.reshape(-1, 1))
 
     data['model_year'] = date.today().year - data['model_year']
 
@@ -123,13 +138,36 @@ def preprocess(data):
     data.drop(indices, inplace=True)
     indices = data[(data['fuel_type'] == 'Bensin') & (data['cylinder'] == 0)].index
     data.drop(indices, inplace=True)
-    data = data.drop(columns=['first_reg'])
+
     # Dropping rows with null in one or more attribute:
     #data = data.sample(3000)
     #data['cylinder'] = data['cylinder'].fillna(data.cylinder.mean())
+    #imputer = SimpleImputer(missing_values=np.nan, strategy='mean', verbose=2)
+
+    #imputer.fit(data.loc[:, 'cylinder'].values.reshape(-1, 1))
+
+    #data['cylinder'] = imputer.transform(data.loc[:, 'cylinder'].values.reshape(-1, 1))
+
+
+    #imputer = SimpleImputer(missing_values=np.nan, strategy='mean', verbose=2)
+    #imputer.fit(data.loc[:, 'cylinder'].values.reshape(-1, 1))
+    #data['cylinder'] = imputer.transform(data.loc[:, 'cylinder'].values.reshape(-1, 1))
+
+    print(data)
+
     data = data.dropna()
     #data = data.sort_values(by=['km'], axis=0)
     label_encode(data)
+
+    #model_dummies = pd.get_dummies(data.model, prefix='model', prefix_sep='-')
+    #data = pd.concat([data, model_dummies], axis=1)
+    #man_dummies = pd.get_dummies(data.manufacturer)
+    #data = pd.concat([data, man_dummies], axis=1)
+    #data = data.drop(columns=['model'])
+    #data = data.drop(columns=['manufacturer'])
+    #data = data.drop(columns=['fuel_type'])
+
+
 
     if _print_processed_dataset_stats:
         print('Processed Dataset Statistics:')
@@ -148,10 +186,13 @@ best_param_score = [0.0,0.0]
 def process_and_label(data, dependant_variable):
 
     data.index = data.index.astype(int)  # use astype to convert to int
+    #data = data.sample(1500)
     pre_count = len(data)
     data = preprocess(data)
     label = data[dependant_variable.name]
     data = data.drop(columns=label.name)
+
+    print(data)
     data.to_csv('../labeled_cars.csv')
     post_count = len(data)
     if(_verbose > 0):
@@ -186,7 +227,7 @@ def define_estimator(d, _base_estimator, _meta_estimator, _tune_hyper_parameters
                        }]
         print('Starting GridSearchCV with params: ', parameters)
 
-        _cv = GridSearchCV(_base_estimator, param_grid=parameters, n_jobs=8, verbose=2, cv=3, scoring='neg_median_absolute_error', refit=True)
+        _cv = GridSearchCV(_base_estimator, param_grid=parameters, n_jobs=8, verbose=2, cv=3, scoring='r2', refit=True)
 
         _cv.fit(d['X'], d['Y'])
 
@@ -199,7 +240,87 @@ def define_estimator(d, _base_estimator, _meta_estimator, _tune_hyper_parameters
     return _estimator
 
 
+def plot_learning_curve(estimator, title, X, y, ylim=(0.85, 1), cv=None,
+                        n_jobs=None, train_sizes=np.logspace([0.01, 1.0], num=30, stop=1.0, endpoint=True, base=0.01)):
+    """
+    Generate a simple plot of the test and training learning curve.
 
+    Parameters
+    ----------
+    estimator : object type that implements the "fit" and "predict" methods
+        An object of that type which is cloned for each validation.
+
+    title : string
+        Title for the chart.
+
+    X : array-like, shape (n_samples, n_features)
+        Training vector, where n_samples is the number of samples and
+        n_features is the number of features.
+
+    y : array-like, shape (n_samples) or (n_samples, n_features), optional
+        Target relative to X for classification or regression;
+        None for unsupervised learning.
+
+    ylim : tuple, shape (ymin, ymax), optional
+        Defines minimum and maximum yvalues plotted.
+
+    cv : int, cross-validation generator or an iterable, optional
+        Determines the cross-validation splitting strategy.
+        Possible inputs for cv are:
+          - None, to use the default 3-fold cross-validation,
+          - integer, to specify the number of folds.
+          - :term:`CV splitter`,
+          - An iterable yielding (train, test) splits as arrays of indices.
+
+        For integer/None inputs, if ``y`` is binary or multiclass,
+        :class:`StratifiedKFold` used. If the estimator is not a classifier
+        or if ``y`` is neither binary nor multiclass, :class:`KFold` is used.
+
+        Refer :ref:`User Guide <cross_validation>` for the various
+        cross-validators that can be used here.
+
+    n_jobs : int or None, optional (default=None)
+        Number of jobs to run in parallel.
+        ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
+        ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
+        for more details.
+
+    train_sizes : array-like, shape (n_ticks,), dtype float or int
+        Relative or absolute numbers of training examples that will be used to
+        generate the learning curve. If the dtype is float, it is regarded as a
+        fraction of the maximum size of the training set (that is determined
+        by the selected validation method), i.e. it has to be within (0, 1].
+        Otherwise it is interpreted as absolute sizes of the training sets.
+        Note that for classification the number of samples usually have to
+        be big enough to contain at least one sample from each class.
+        (default: np.linspace(0.1, 1.0, 5))
+    """
+    plt.figure()
+    plt.title(title)
+    if ylim is not None:
+        plt.ylim(*ylim)
+    plt.xlabel("Training examples")
+    plt.ylabel("Score")
+    train_sizes, train_scores, test_scores = learning_curve(
+        estimator, X, y, n_jobs=n_jobs, train_sizes=train_sizes, verbose=2, scoring='r2', random_state=rng)
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+    plt.grid()
+
+    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
+                     train_scores_mean + train_scores_std, alpha=0.1,
+                     color="r")
+    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
+                     test_scores_mean + test_scores_std, alpha=0.1, color="g")
+    plt.plot(train_sizes, train_scores_mean, 'o-', color="r",
+             label="Training score")
+    plt.plot(train_sizes, test_scores_mean, 'o-', color="g",
+             label="Cross-validation score")
+
+    plt.legend(loc="best")
+    return plt
 
 def fit_model(X_train, Y_train, estimator):
 
@@ -230,14 +351,15 @@ def run(filename, X, Y, x, y):
     d = {'X': X, 'x': x, 'Y': Y, 'y': y}
 
 
-    estimator = define_estimator(d, RandomForestRegressor(random_state=rng), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
+    estimator = define_estimator(d, RandomForestRegressor(random_state=rng, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
 
+    plot_learning_curve(estimator, 'Learning Curves - RandomForestRegressor', X, Y, (.75, 1.01), cv = KFold(n_splits=10, random_state=rng), n_jobs=8)
 
-
+    plt.show()
 
     model = fit_model(X, Y, estimator=estimator)
 
-    scores = cross_val_score(model, d['x'], d['y'], cv=3)
+    scores = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8, scoring='r2')
 
     predictions = model.predict(d['x'])
 
