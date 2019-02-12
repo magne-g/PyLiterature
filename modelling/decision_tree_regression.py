@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
+import statsmodels
 import sklearn as s
+from sklearn import tree
 import os
 from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict
 from sklearn.ensemble import RandomForestRegressor, BaggingRegressor, GradientBoostingRegressor
@@ -19,6 +21,8 @@ import featuretools as ft
 from sklearn import svm
 from sklearn import metrics
 from datetime import date
+from sklearn.linear_model import ElasticNet
+from sklearn.linear_model import Lasso
 from sklearn.model_selection import validation_curve, learning_curve, ShuffleSplit, KFold
 import warnings
 from IPython.core.interactiveshell import InteractiveShell
@@ -33,7 +37,8 @@ _tune_hyper_parameters = True
 _verbose = 1
 
 _important_data = '{}'
-
+alpha = 1.0
+lasso = Lasso(alpha=alpha)
 
 power_transform = preprocessing.PowerTransformer('box-cox')
 
@@ -454,13 +459,19 @@ if(len(data) != len(label)):
 
 X, x, Y, y = split_data(data, label)
 
+print(X.head(), x.head())
+
 d = {'X': X, 'x': x, 'Y': Y, 'y': y}
 
 
 #estimator = define_estimator(d, RandomForestRegressor(random_state=rng, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
-estimator = GradientBoostingRegressor(loss='ls', max_depth=5, max_features=5)
 
-plot_learning_curve(estimator, 'Learning Curves - RandomForestRegressor', X, Y, (.75, 1.01), cv = KFold(n_splits=10, random_state=rng), n_jobs=8)
+
+estimator = GradientBoostingRegressor(loss='ls', max_depth=5, max_features='auto', n_estimators=300)
+
+#estimator = ElasticNet(alpha=alpha, l1_ratio=0.5, fit_intercept=True)
+
+plot_learning_curve(estimator, 'Learning Curves - GradientBoostingRegressor', X, Y, (.75, 1.01), cv = KFold(n_splits=10, random_state=rng), n_jobs=8)
 
 plt.show()
 
@@ -470,20 +481,29 @@ scores = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_sta
 
 predictions = model.predict(d['x'])
 
+scores_training_data = cross_val_score(model, d['X'], d['Y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8, scoring='r2')
+
 predicted_prices = power_transform.inverse_transform(np.array(predictions).reshape(-1,1))
 
 seen_prices = power_transform.inverse_transform(np.array(y).reshape(-1,1))
 
 _accuracy = "Accuracy: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
 
+_accuracy_training = "Training Accuracy: %0.4f%% (+/- %0.3f)" % (scores_training_data.mean(), scores_training_data.std() * 2)
+
+
+
 
 seen_prices = np.array(seen_prices).flatten()
 predicted_prices = np.array(predicted_prices).flatten()
 
 
-ax = sns.regplot(seen_prices, predicted_prices, fit_reg=True)
+ax = sns.regplot(seen_prices, predicted_prices, fit_reg=True, robust=True)
 ax.set(xlabel='True price', ylabel='Predicted price')
 ax.set_title(_accuracy)
+
+print(_accuracy)
+print(_accuracy_training)
 
 
 save_accuracy_log(scores, estimator)
@@ -501,9 +521,6 @@ print(model.feature_importances_)
 
 
 print(data.info(verbose=True))
-
-
-
 
 
 
