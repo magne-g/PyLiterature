@@ -14,9 +14,8 @@ import csv
 pd.options.mode.chained_assignment = None
 
 
-def pp_trans(dataframe): #Truncates (FWD, RWD, AWD) transmission layouts
+def pp_trans(dataframe): #Normalize drivetrain (FWD, RWD, AWD)
     trans = dataframe['trans']
-
     trans = trans.str.replace('.*(x(|-| |)drive|quat|4|awd|sperre|awc|fire).*', 'AWD', regex=True, case=False)
     trans = trans.str.replace('.*(forhjul|fwd).*', 'FWD', regex=True, case=False)
     trans = trans.str.replace('.*(bakhjul|rwd).*', 'RWD', regex=True, case=False)

@@ -3,7 +3,7 @@ import numpy as np
 import sklearn as s
 import os
 from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict
-from sklearn.ensemble import RandomForestRegressor, BaggingRegressor
+from sklearn.ensemble import RandomForestRegressor, BaggingRegressor, GradientBoostingRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.decomposition import PCA
@@ -15,7 +15,7 @@ from sklearn import preprocessing
 from sklearn.decomposition import PCA
 import seaborn as sns
 from sklearn.impute import SimpleImputer
-
+import featuretools as ft
 from sklearn import svm
 from sklearn import metrics
 from datetime import date
@@ -24,7 +24,6 @@ import warnings
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
 warnings.simplefilter(action='ignore', category=FutureWarning)
-
 
 #Settings
 
@@ -36,14 +35,15 @@ _verbose = 1
 _important_data = '{}'
 
 
-
+power_transform = preprocessing.PowerTransformer('box-cox')
 
 
 #pd.set_option('display.max_rows', 500)
-#pd.set_option('display.max_columns', 500)
-#pd.set_option('display.width', 500)
-#pd.set_option('display.max_colwidth', -1)
-#pd.set_option('display.max_info_columns', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 500)
+pd.set_option('display.max_colwidth', -1)
+pd.set_option('display.max_info_columns', 500)
+pd.set_option('use_inf_as_na', True)
 
 dot_data = StringIO()
 rng = np.random.RandomState(42)
@@ -54,11 +54,6 @@ def frange(x, y, jump):
     while x < y:
         yield x
         x += jump
-
-def result(scores, model, param_score, label, predictions, d):
-    print("Accuracy: %0.4f (+/- %0.3f)" % (scores.mean(), scores.std() * 2))
-    ax = sns.regplot(d['y'], predictions, fit_reg=True)
-    ax.set(xlabel='True price in NOK/1000', ylabel='Predicted price in NOK/1000')
 
 
 def pandas_encoding(data):
@@ -82,6 +77,12 @@ def label_encode(data):
     data['trans'] = le.fit_transform(data['trans'].str.lower())
     data['fuel_type'] = le.fit_transform(data['fuel_type'].str.lower())
 
+    data['manufacturer'] = data['manufacturer'].astype('category')
+    data['model'] = data['model'].astype('category')
+    data['gear'] = data['gear'].astype('category')
+    data['trans'] = data['trans'].astype('category')
+    data['fuel_type'] = data['fuel_type'].astype('category')
+
     return data
 
 
@@ -104,13 +105,14 @@ def preprocess(data):
         print('Unprocessed Dataset Statistics:')
         print_dataset_stats(data)
 
-    data = data.set_index('finn_code')
+    #data = data.set_index('finn_code')
     data['price'] = data['price'].astype(np.float)
     data['price'] = np.round(data['price'], -3)
     data['price'] = np.divide(data['price'], 1000)
     data['km'] = data['km'].astype(np.float)
     data['km'] = np.round(data['km'], -3)
     data['km'] = np.divide(data['km'], 1000)
+
 
     data = data[data.model_year > 1985]
     data = data[data.price < 950]
@@ -122,18 +124,17 @@ def preprocess(data):
     data = data[data.km < 350]
     data = data[data.power > 0]
     data = data[data.power < 500]
-    kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=40, strategy='uniform')
+    kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=15)
     kbins.fit(data.loc[:, 'km'].values.reshape(-1,1))
     data['km'] = kbins.transform(data.loc[:, 'km'].values.reshape(-1, 1))
-    power_transform = preprocessing.PowerTransformer('box-cox')
     power_transform.fit(data.loc[:, 'price'].values.reshape(-1, 1))
     data['price'] = power_transform.transform(data.loc[:, 'price'].values.reshape(-1, 1))
     #kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=250, strategy='uniform')
     #kbins.fit(data.loc[:, 'price'].values.reshape(-1, 1))
     #data['price'] = kbins.transform(data.loc[:, 'price'].values.reshape(-1, 1))
 
-    data['model_year'] = date.today().year - data['model_year']
-
+    data['model_age'] = date.today().year - data['model_year']
+    #data.model_year = pd.to_datetime(data.model_year, format='%Y')
     indices = data[(data['fuel_type'] == 'Diesel') & (data['cylinder'] == 0)].index
     data.drop(indices, inplace=True)
     indices = data[(data['fuel_type'] == 'Bensin') & (data['cylinder'] == 0)].index
@@ -142,9 +143,9 @@ def preprocess(data):
     # Dropping rows with null in one or more attribute:
     #data = data.sample(3000)
     #data['cylinder'] = data['cylinder'].fillna(data.cylinder.mean())
-    #imputer = SimpleImputer(missing_values=np.nan, strategy='mean', verbose=2)
+    imputer = SimpleImputer(missing_values=np.nan, strategy='mean', verbose=2)
 
-    #imputer.fit(data.loc[:, 'cylinder'].values.reshape(-1, 1))
+    imputer.fit(data.loc[:, 'cylinder'].values.reshape(-1, 1))
 
     #data['cylinder'] = imputer.transform(data.loc[:, 'cylinder'].values.reshape(-1, 1))
 
@@ -152,12 +153,32 @@ def preprocess(data):
     #imputer = SimpleImputer(missing_values=np.nan, strategy='mean', verbose=2)
     #imputer.fit(data.loc[:, 'cylinder'].values.reshape(-1, 1))
     #data['cylinder'] = imputer.transform(data.loc[:, 'cylinder'].values.reshape(-1, 1))
+    print(data.info(verbose=True))
 
-    print(data)
+    #es = ft.EntitySet(id='cars')
+
+    #es = es.entity_from_dataframe(entity_id='cars', dataframe=data, index='finn_code')
+
+    #es = es.normalize_entity(base_entity_id="cars",
+    #                         new_entity_id="model",
+    #                         index="manufacturer",
+    #                         additional_variables=["power"])
+
+    # es = es.add_interesting_values(verbose=True)
+
+    # new_relationship = ft.Relationship(es['model']['manufacturer'])
+    # es = es.add_relationship(new_relationship)
+
+    #data['price'] = label.values
 
     data = data.dropna()
+
+    print(data.info(verbose=True))
+
     #data = data.sort_values(by=['km'], axis=0)
     label_encode(data)
+
+
 
     #model_dummies = pd.get_dummies(data.model, prefix='model', prefix_sep='-')
     #data = pd.concat([data, model_dummies], axis=1)
@@ -166,6 +187,8 @@ def preprocess(data):
     #data = data.drop(columns=['model'])
     #data = data.drop(columns=['manufacturer'])
     #data = data.drop(columns=['fuel_type'])
+    #data = data.drop(columns=['gear'])
+    #data = data.drop(columns=['cylinder'])
 
 
 
@@ -198,6 +221,13 @@ def process_and_label(data, dependant_variable):
     if(_verbose > 0):
         print('{0:.0f}% of data rows dropped in processing...'.format(100 - (post_count/pre_count * 100)))
     return data, label
+
+def feature_engineering(data):
+
+
+
+
+    return data
 
 def split_data(data, label, test_size=0.2):
 
@@ -241,7 +271,7 @@ def define_estimator(d, _base_estimator, _meta_estimator, _tune_hyper_parameters
 
 
 def plot_learning_curve(estimator, title, X, y, ylim=(0.85, 1), cv=None,
-                        n_jobs=None, train_sizes=np.logspace([0.01, 1.0], num=30, stop=1.0, endpoint=True, base=0.01)):
+                        n_jobs=None, train_sizes=np.logspace([0.1, 1.0], num=50, stop=1.0, endpoint=True, base=0.01)):
     """
     Generate a simple plot of the test and training learning curve.
 
@@ -302,12 +332,13 @@ def plot_learning_curve(estimator, title, X, y, ylim=(0.85, 1), cv=None,
     plt.xlabel("Training examples")
     plt.ylabel("Score")
     train_sizes, train_scores, test_scores = learning_curve(
-        estimator, X, y, n_jobs=n_jobs, train_sizes=train_sizes, verbose=2, scoring='r2', random_state=rng)
+        estimator, X, y, n_jobs=n_jobs, train_sizes=train_sizes, scoring='r2', random_state=rng)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     test_scores_mean = np.mean(test_scores, axis=1)
     test_scores_std = np.std(test_scores, axis=1)
     plt.grid()
+    plt.xscale('log')
 
     plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
                      train_scores_mean + train_scores_std, alpha=0.1,
@@ -335,44 +366,34 @@ def load_dataset(filename):
     data_orig = data
     return data, data_orig
 
-def run(filename, X, Y, x, y):
+def show_boxplot():
 
-    data, data_orig = load_dataset(filename)
+    g = sns.boxplot('manufacturer', 'price', data=data)
+    locs, labels = plt.xticks()
+    fig = plt.gcf()
+    fig.set_size_inches(16, 9)
 
-
-    data, label = process_and_label(data, dependant_variable=data['price'])
-
-    if(len(data) != len(label)):
-        print(len(data), len(label))
-        assert len(data) == len(label), 'Error: Length not equal in X, Y'
-
-    X, x, Y, y = split_data(data, label)
-
-    d = {'X': X, 'x': x, 'Y': Y, 'y': y}
-
-
-    estimator = define_estimator(d, RandomForestRegressor(random_state=rng, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
-
-    plot_learning_curve(estimator, 'Learning Curves - RandomForestRegressor', X, Y, (.75, 1.01), cv = KFold(n_splits=10, random_state=rng), n_jobs=8)
-
+    g.axes.set_title("Title", fontsize=50)
+    g.tick_params(labelsize=12)
+    plt.setp(labels, rotation=90)
     plt.show()
 
-    model = fit_model(X, Y, estimator=estimator)
-
-    scores = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8, scoring='r2')
-
-    predictions = model.predict(d['x'])
-
-    result(scores, model, best_param_score, label, predictions, d)
-
-    save_accuracy_log(scores, estimator)
-
+def plot_dist_before(title):
+    f, ax = plt.subplots(figsize=(6.5, 6.5))
+    sns.despine(f, left=True, bottom=True)
+    g = sns.distplot(data.price)
+    ax.set_title(title)
     plt.show()
 
-    print(model.get_params())
+def plot_dist_after(title):
+    f, ax = plt.subplots(figsize=(6.5, 6.5))
+    sns.despine(f, left=True, bottom=True)
+    g = sns.distplot(label)
+    ax.set_title(title)
+    plt.show()
 
-
-
+def show_table_pre_proccesing():
+    demo_table = data.head()
 
 
 
@@ -390,5 +411,102 @@ path += '/'
 path += 'processed_cars.csv'
 print(path)
 
+filename = path
 
-run(path, X_train, Y_train, X_test, Y_test)
+data, data_orig = load_dataset(filename)
+
+
+
+show_boxplot()
+
+plot_dist_before('Price Distribution - Before Transformation')
+
+data, label = process_and_label(data, dependant_variable=data['price'])
+
+
+
+
+
+
+
+
+
+
+print(data.info(verbose=True))
+plot_dist_after('Price Distribution - After Transformation')
+
+#pairplot_data = data.copy()
+
+
+
+#pairplot_data['price'] = label.values
+
+#pairplot_data = pairplot_data.drop(columns=['model', 'manufacturer', 'cylinder', 'fuel_type', 'trans', 'gear'])
+
+
+#g = sns.pairplot(pairplot_data)
+#plt.show()
+
+
+if(len(data) != len(label)):
+    print(len(data), len(label))
+    assert len(data) == len(label), 'Error: Length not equal in X, Y'
+
+X, x, Y, y = split_data(data, label)
+
+d = {'X': X, 'x': x, 'Y': Y, 'y': y}
+
+
+#estimator = define_estimator(d, RandomForestRegressor(random_state=rng, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
+estimator = GradientBoostingRegressor(loss='ls', max_depth=5, max_features=5)
+
+plot_learning_curve(estimator, 'Learning Curves - RandomForestRegressor', X, Y, (.75, 1.01), cv = KFold(n_splits=10, random_state=rng), n_jobs=8)
+
+plt.show()
+
+model = fit_model(X, Y, estimator=estimator)
+
+scores = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8, scoring='r2')
+
+predictions = model.predict(d['x'])
+
+predicted_prices = power_transform.inverse_transform(np.array(predictions).reshape(-1,1))
+
+seen_prices = power_transform.inverse_transform(np.array(y).reshape(-1,1))
+
+_accuracy = "Accuracy: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
+
+
+seen_prices = np.array(seen_prices).flatten()
+predicted_prices = np.array(predicted_prices).flatten()
+
+
+ax = sns.regplot(seen_prices, predicted_prices, fit_reg=True)
+ax.set(xlabel='True price', ylabel='Predicted price')
+ax.set_title(_accuracy)
+
+
+save_accuracy_log(scores, estimator)
+
+plt.show()
+
+feat_importances = pd.Series(model.feature_importances_, index=data.columns)
+feat_importances.nlargest(6).plot(kind='barh')
+
+plt.show()
+
+print(model.get_params())
+print(x.columns)
+print(model.feature_importances_)
+
+
+print(data.info(verbose=True))
+
+
+
+
+
+
+
+
+#run(path, X_train, Y_train, X_test, Y_test)
