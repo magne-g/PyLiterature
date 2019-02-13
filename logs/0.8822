@@ -1,0 +1,1501 @@
+,0
+0,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2128119000, splitter='best')"
+1,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=880148540, splitter='best')"
+2,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=809182122, splitter='best')"
+3,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=422135399, splitter='best')"
+4,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1867569193, splitter='best')"
+5,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1974317080, splitter='best')"
+6,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1058288678, splitter='best')"
+7,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=326131490, splitter='best')"
+8,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1370534018, splitter='best')"
+9,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=333999601, splitter='best')"
+10,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1285981412, splitter='best')"
+11,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=10047595, splitter='best')"
+12,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=836214955, splitter='best')"
+13,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2008753586, splitter='best')"
+14,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1168854493, splitter='best')"
+15,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=22564965, splitter='best')"
+16,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=387537761, splitter='best')"
+17,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=442784267, splitter='best')"
+18,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1550371090, splitter='best')"
+19,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1351181924, splitter='best')"
+20,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=393341995, splitter='best')"
+21,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1320402874, splitter='best')"
+22,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1792348154, splitter='best')"
+23,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1984699184, splitter='best')"
+24,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=587631548, splitter='best')"
+25,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1245598736, splitter='best')"
+26,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1933754697, splitter='best')"
+27,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=818449976, splitter='best')"
+28,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1915580214, splitter='best')"
+29,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=91485680, splitter='best')"
+30,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=795139886, splitter='best')"
+31,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=372396043, splitter='best')"
+32,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=179963197, splitter='best')"
+33,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1967828559, splitter='best')"
+34,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1601790167, splitter='best')"
+35,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1109786962, splitter='best')"
+36,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=997398279, splitter='best')"
+37,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=596783070, splitter='best')"
+38,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1316670100, splitter='best')"
+39,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1112550480, splitter='best')"
+40,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=681969366, splitter='best')"
+41,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=962516452, splitter='best')"
+42,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=825821557, splitter='best')"
+43,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=589405135, splitter='best')"
+44,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1499783877, splitter='best')"
+45,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2064061639, splitter='best')"
+46,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1072315928, splitter='best')"
+47,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1732434385, splitter='best')"
+48,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2102064216, splitter='best')"
+49,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=629921035, splitter='best')"
+50,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=950087310, splitter='best')"
+51,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=829681210, splitter='best')"
+52,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2094518169, splitter='best')"
+53,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=221602280, splitter='best')"
+54,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1907220332, splitter='best')"
+55,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=729789977, splitter='best')"
+56,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=169336878, splitter='best')"
+57,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=189689119, splitter='best')"
+58,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=882938633, splitter='best')"
+59,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=379089935, splitter='best')"
+60,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1826427590, splitter='best')"
+61,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2144706960, splitter='best')"
+62,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=775565206, splitter='best')"
+63,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=239687449, splitter='best')"
+64,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=291822548, splitter='best')"
+65,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2032421973, splitter='best')"
+66,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1784508665, splitter='best')"
+67,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1343701382, splitter='best')"
+68,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=145796877, splitter='best')"
+69,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=517640526, splitter='best')"
+70,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=847913588, splitter='best')"
+71,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=992239110, splitter='best')"
+72,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1277104264, splitter='best')"
+73,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=827206514, splitter='best')"
+74,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1822767791, splitter='best')"
+75,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=495132487, splitter='best')"
+76,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2023179761, splitter='best')"
+77,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1811456826, splitter='best')"
+78,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1908110038, splitter='best')"
+79,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1268483548, splitter='best')"
+80,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2036734545, splitter='best')"
+81,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1052544222, splitter='best')"
+82,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1554961373, splitter='best')"
+83,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=235719027, splitter='best')"
+84,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1479828390, splitter='best')"
+85,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1954827234, splitter='best')"
+86,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1370526097, splitter='best')"
+87,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=96355770, splitter='best')"
+88,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1412681193, splitter='best')"
+89,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=620823142, splitter='best')"
+90,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=158946576, splitter='best')"
+91,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=644963853, splitter='best')"
+92,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=413475998, splitter='best')"
+93,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1566362775, splitter='best')"
+94,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=987880418, splitter='best')"
+95,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=260606571, splitter='best')"
+96,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=517830843, splitter='best')"
+97,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2066145068, splitter='best')"
+98,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=330511457, splitter='best')"
+99,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1653555330, splitter='best')"
+100,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=843053860, splitter='best')"
+101,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=129987754, splitter='best')"
+102,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1459751847, splitter='best')"
+103,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1894218713, splitter='best')"
+104,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=965365942, splitter='best')"
+105,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1737251798, splitter='best')"
+106,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=280703339, splitter='best')"
+107,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=311074854, splitter='best')"
+108,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1354161678, splitter='best')"
+109,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1305571191, splitter='best')"
+110,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=169613808, splitter='best')"
+111,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=164933123, splitter='best')"
+112,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1248646492, splitter='best')"
+113,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=694303701, splitter='best')"
+114,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1369031576, splitter='best')"
+115,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1021582732, splitter='best')"
+116,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=540699345, splitter='best')"
+117,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=86621344, splitter='best')"
+118,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1657761807, splitter='best')"
+119,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1833165292, splitter='best')"
+120,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=497628585, splitter='best')"
+121,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1617765483, splitter='best')"
+122,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1000553341, splitter='best')"
+123,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1793174977, splitter='best')"
+124,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=104800566, splitter='best')"
+125,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1984029410, splitter='best')"
+126,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1589562537, splitter='best')"
+127,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2105999905, splitter='best')"
+128,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=91351453, splitter='best')"
+129,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1020154, splitter='best')"
+130,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1609331446, splitter='best')"
+131,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=796600076, splitter='best')"
+132,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=124284044, splitter='best')"
+133,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1649112337, splitter='best')"
+134,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1885781407, splitter='best')"
+135,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1857959519, splitter='best')"
+136,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1283264226, splitter='best')"
+137,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=300775290, splitter='best')"
+138,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2138610726, splitter='best')"
+139,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=40739629, splitter='best')"
+140,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1506295795, splitter='best')"
+141,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=226275356, splitter='best')"
+142,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1147564989, splitter='best')"
+143,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=380291056, splitter='best')"
+144,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1726280156, splitter='best')"
+145,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=161476925, splitter='best')"
+146,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2061050100, splitter='best')"
+147,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2060645099, splitter='best')"
+148,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=547631800, splitter='best')"
+149,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=346849551, splitter='best')"
+150,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1604930999, splitter='best')"
+151,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1166886635, splitter='best')"
+152,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2079122670, splitter='best')"
+153,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1710631288, splitter='best')"
+154,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1152225545, splitter='best')"
+155,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=393845661, splitter='best')"
+156,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1794294680, splitter='best')"
+157,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1444700158, splitter='best')"
+158,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1809714534, splitter='best')"
+159,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=96719187, splitter='best')"
+160,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1020408196, splitter='best')"
+161,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=997599808, splitter='best')"
+162,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1025540061, splitter='best')"
+163,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=14372528, splitter='best')"
+164,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=474482690, splitter='best')"
+165,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2007084460, splitter='best')"
+166,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1523090573, splitter='best')"
+167,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1275617655, splitter='best')"
+168,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1233682077, splitter='best')"
+169,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1515358193, splitter='best')"
+170,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1272633667, splitter='best')"
+171,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=925794449, splitter='best')"
+172,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1003337661, splitter='best')"
+173,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=382718244, splitter='best')"
+174,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=180788888, splitter='best')"
+175,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1190846895, splitter='best')"
+176,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=76767936, splitter='best')"
+177,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1762393012, splitter='best')"
+178,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2094751725, splitter='best')"
+179,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=193705934, splitter='best')"
+180,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1837271624, splitter='best')"
+181,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=470159758, splitter='best')"
+182,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1650670384, splitter='best')"
+183,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1682038648, splitter='best')"
+184,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=771579223, splitter='best')"
+185,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=534455235, splitter='best')"
+186,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=937393291, splitter='best')"
+187,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1960290490, splitter='best')"
+188,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1932568569, splitter='best')"
+189,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1279854372, splitter='best')"
+190,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1229842492, splitter='best')"
+191,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1112322020, splitter='best')"
+192,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=384017322, splitter='best')"
+193,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=380337531, splitter='best')"
+194,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1793495749, splitter='best')"
+195,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2071593766, splitter='best')"
+196,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1628300727, splitter='best')"
+197,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1650122046, splitter='best')"
+198,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1910109485, splitter='best')"
+199,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=432926039, splitter='best')"
+200,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2007474186, splitter='best')"
+201,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1733981245, splitter='best')"
+202,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=487098188, splitter='best')"
+203,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2101033185, splitter='best')"
+204,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=717405336, splitter='best')"
+205,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1045192390, splitter='best')"
+206,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2109553203, splitter='best')"
+207,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=279114499, splitter='best')"
+208,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=995022394, splitter='best')"
+209,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1724773959, splitter='best')"
+210,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1901518483, splitter='best')"
+211,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1450950492, splitter='best')"
+212,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=642727486, splitter='best')"
+213,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=990287157, splitter='best')"
+214,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=462726004, splitter='best')"
+215,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1420098802, splitter='best')"
+216,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=54496748, splitter='best')"
+217,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=516851053, splitter='best')"
+218,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=990719305, splitter='best')"
+219,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=201628778, splitter='best')"
+220,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=758182113, splitter='best')"
+221,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1649656632, splitter='best')"
+222,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=946981081, splitter='best')"
+223,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=157762472, splitter='best')"
+224,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=800746224, splitter='best')"
+225,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1963960825, splitter='best')"
+226,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1200806146, splitter='best')"
+227,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1401042807, splitter='best')"
+228,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1503776517, splitter='best')"
+229,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1291795972, splitter='best')"
+230,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=248432388, splitter='best')"
+231,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=557391925, splitter='best')"
+232,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2014780462, splitter='best')"
+233,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=929104598, splitter='best')"
+234,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1648347824, splitter='best')"
+235,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=78427656, splitter='best')"
+236,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1837182050, splitter='best')"
+237,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=417788947, splitter='best')"
+238,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2125612921, splitter='best')"
+239,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=107509488, splitter='best')"
+240,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=746874428, splitter='best')"
+241,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1117693818, splitter='best')"
+242,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1701846505, splitter='best')"
+243,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=65489314, splitter='best')"
+244,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1109125809, splitter='best')"
+245,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2109629265, splitter='best')"
+246,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=841902141, splitter='best')"
+247,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2131745936, splitter='best')"
+248,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=660977879, splitter='best')"
+249,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1706975234, splitter='best')"
+250,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1356492959, splitter='best')"
+251,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1990205154, splitter='best')"
+252,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=963964901, splitter='best')"
+253,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=528012044, splitter='best')"
+254,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=961289335, splitter='best')"
+255,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1064600444, splitter='best')"
+256,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=158803950, splitter='best')"
+257,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=149744728, splitter='best')"
+258,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=399173960, splitter='best')"
+259,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1696174659, splitter='best')"
+260,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=343967629, splitter='best')"
+261,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1546732900, splitter='best')"
+262,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=392932961, splitter='best')"
+263,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1964655882, splitter='best')"
+264,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1621182056, splitter='best')"
+265,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1680061367, splitter='best')"
+266,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1140743490, splitter='best')"
+267,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1172351610, splitter='best')"
+268,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=556262363, splitter='best')"
+269,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2047311388, splitter='best')"
+270,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1669660296, splitter='best')"
+271,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=190596290, splitter='best')"
+272,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1957008280, splitter='best')"
+273,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1512659681, splitter='best')"
+274,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1555326283, splitter='best')"
+275,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=152137897, splitter='best')"
+276,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1329361416, splitter='best')"
+277,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1413264846, splitter='best')"
+278,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=666759207, splitter='best')"
+279,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1853662744, splitter='best')"
+280,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=218430724, splitter='best')"
+281,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1010230666, splitter='best')"
+282,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=373605306, splitter='best')"
+283,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1208564961, splitter='best')"
+284,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1754293207, splitter='best')"
+285,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1085119611, splitter='best')"
+286,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1600685006, splitter='best')"
+287,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=21827621, splitter='best')"
+288,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1115633991, splitter='best')"
+289,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=840586490, splitter='best')"
+290,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=959582084, splitter='best')"
+291,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=209523887, splitter='best')"
+292,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=2129770073, splitter='best')"
+293,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=140026769, splitter='best')"
+294,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=348090821, splitter='best')"
+295,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1984798756, splitter='best')"
+296,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=945679675, splitter='best')"
+297,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=470165167, splitter='best')"
+298,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=787090380, splitter='best')"
+299,"DecisionTreeRegressor(criterion='mse', max_depth=15, max_features='sqrt',
+           max_leaf_nodes=None, min_impurity_decrease=0.0,
+           min_impurity_split=None, min_samples_leaf=1,
+           min_samples_split=2, min_weight_fraction_leaf=0.0,
+           presort=False, random_state=1694278427, splitter='best')"
