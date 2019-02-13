@@ -126,7 +126,7 @@ def process_and_label(data):
 
     data = preprocess(data)
 
-    data.to_csv('../labeled_cars.csv')
+    #data.to_csv('../labeled_cars.csv')
 
     return data
 
