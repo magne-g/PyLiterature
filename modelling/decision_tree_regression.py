@@ -8,7 +8,7 @@ import seaborn as sns
 from IPython.core.interactiveshell import InteractiveShell
 from matplotlib import pyplot as plt
 from sklearn import preprocessing
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor, AdaBoostRegressor
 from sklearn.externals.six import StringIO
 from sklearn.linear_model import Lasso
 from sklearn.model_selection import cross_val_score, GridSearchCV, KFold, learning_curve, train_test_split, \
@@ -38,7 +38,7 @@ lasso = Lasso(alpha=alpha)
 
 power_transform_price = preprocessing.PowerTransformer('box-cox')
 
-# pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 500)
 pd.set_option('display.max_colwidth', -1)
@@ -430,11 +430,11 @@ X, x, Y, y = split_data(data, label)
 
 d = {'X': X, 'x': x, 'Y': Y, 'y': y}
 
-# estimator = define_estimator(d, RandomForestRegressor(random_state=rng, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
+#estimator = define_estimator(d, RandomForestRegressor(random_state=r_state, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
 
 
 estimator = GradientBoostingRegressor(loss='ls',
-                                      alpha=0.9,
+                                    alpha=0.9,
                                       max_depth=5,
                                       max_features='auto',
                                       n_estimators=300,
@@ -492,7 +492,7 @@ scores_mse = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random
 #dummy_scores_mse = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
 #                                   scoring='neg_mean_squared_error')
 scores_abs = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
-                               scoring='neg_mean_absolute_error')
+                               scoring='neg_median_absolute_error')
 #dummy_scores_mse = np.array(dummy_scores_mse)
 #dummy_scores_r2 = np.array(dummy_scores_r2)
 #dummy_scores_variance = np.array(dummy_scores_variance)
@@ -626,7 +626,9 @@ if not _exclude_price_trans:
     except:
         raise Exception
 
-print(predicted_prices)
+d['x']['p'] = predicted_prices
+
+
 print(d['x'])
 
 # run(path, X_train, Y_train, X_test, Y_test)
