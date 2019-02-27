@@ -16,6 +16,10 @@ from sklearn.model_selection import cross_val_score, GridSearchCV, KFold, learni
 from sklearn.dummy import DummyRegressor
 import statsmodels
 from sklearn.tree import DecisionTreeRegressor
+from keras.models import Sequential
+from keras.layers.core import Dense, Activation
+from keras.utils import np_utils
+
 
 InteractiveShell.ast_node_interactivity = "all"
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -30,6 +34,7 @@ _show_plots = True
 _exclude_param_tuning = False
 _exclude_price_trans = False
 _exclude_price_tuning = False
+_keras = True
 _verbose = 1
 
 _important_data = '{}'
@@ -143,9 +148,9 @@ def preprocess(data):
 
     # global power_transform_price
 
-    # power_transform_price = preprocessing.MinMaxScaler(
-    #    [np.log(data.price.min()),
-    #     np.log(data.price.max())])
+    min_max = preprocessing.MinMaxScaler()
+
+    data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', 'cylinder']])
 
     # power_transform_price = preprocessing.MinMaxScaler(
     #    [np.log(data.price.min()),
@@ -194,7 +199,7 @@ def preprocess(data):
     label_encode(data)
 
     if (_use_one_hot_encoding and not _exclude_param_tuning):
-        one_hot_cols = ['trans', 'fuel_type', 'gear']  # Nominals with low cardinality
+        one_hot_cols = ['trans', 'fuel_type', 'gear', 'manufacturer', 'model']  # Nominals with low cardinality
         data = pd.get_dummies(data, columns=one_hot_cols)
 
     # data = data.drop(columns=['model'])
@@ -432,203 +437,274 @@ d = {'X': X, 'x': x, 'Y': Y, 'y': y}
 
 #estimator = define_estimator(d, RandomForestRegressor(random_state=r_state, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
 
+if not _keras:
 
-estimator = GradientBoostingRegressor(loss='ls',
-                                    alpha=0.9,
-                                      max_depth=5,
-                                      max_features='auto',
-                                      n_estimators=300,
-                                      random_state=r_state,
-                                      learning_rate=0.1,
-                                      min_samples_split=2,
-                                      min_samples_leaf=1)
+    estimator = GradientBoostingRegressor(loss='ls',
+                                        alpha=0.9,
+                                          max_depth=5,
+                                          max_features='auto',
+                                          n_estimators=300,
+                                          random_state=r_state,
+                                          learning_rate=0.1,
+                                          min_samples_split=2,
+                                          min_samples_leaf=1)
 
-plot_val_curve()
+    plot_val_curve()
 
-dummy_estimator = DecisionTreeRegressor()
+    dummy_estimator = DecisionTreeRegressor()
 
-print(estimator.get_params())
+    print(estimator.get_params())
 
-alpha_range = frange(0.1, 1.5, 0.1)
+    alpha_range = frange(0.1, 1.5, 0.1)
 
-param_grid = {'loss': ['huber', 'ls', 'lad', 'quantile'],
-              'alpha': np.arange(0.05, 0.95, 0.01),
-              'learning_rate': np.arange(0.05, 0.95, 0.01),
-              'min_samples_split': np.arange(2, 8, 1),
-              'min_samples_leaf': np.arange(1, 5, 1),
-              'max_depth': np.arange(3, 9, 1)}
+    param_grid = {'loss': ['huber', 'ls', 'lad', 'quantile'],
+                  'alpha': np.arange(0.05, 0.95, 0.01),
+                  'learning_rate': np.arange(0.05, 0.95, 0.01),
+                  'min_samples_split': np.arange(2, 8, 1),
+                  'min_samples_leaf': np.arange(1, 5, 1),
+                  'max_depth': np.arange(3, 9, 1)}
 
-# rcv = RandomizedSearchCV(estimator, param_grid, n_jobs=8, random_state=rng, verbose=1,
-# cv = KFold(n_splits=10, random_state=rng))
+    # rcv = RandomizedSearchCV(estimator, param_grid, n_jobs=8, random_state=rng, verbose=1,
+    # cv = KFold(n_splits=10, random_state=rng))
 
-# rcv.fit(X, Y)
+    # rcv.fit(X, Y)
 
-# print(rcv.best_params_)
-# print(rcv.best_score_)
-# print(rcv.best_index_)
-# print(rcv.best_estimator_)
+    # print(rcv.best_params_)
+    # print(rcv.best_score_)
+    # print(rcv.best_index_)
+    # print(rcv.best_estimator_)
 
-# estimator = rcv.best_estimator_
-
-
-plot_learning_curve(estimator, 'Learning Curves - GradientBoostingRegressor', X, Y, (.75, 1.01),
-                    cv=KFold(n_splits=10, random_state=r_state), n_jobs=8)
-
-plt.show()
-
-model = fit_model(X, Y, estimator=estimator)
-#dummy_model = fit_model(X, Y, dummy_estimator)
-
-scores_r2 = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8, scoring='r2')
-scores_variance = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
-                                  scoring='explained_variance')
-scores_mse = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
-                             scoring='neg_mean_squared_error')
-
-#dummy_scores_r2 = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
-#                                  scoring='r2')
-#dummy_scores_variance = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state),
-#                                        n_jobs=8, scoring='explained_variance')
-#dummy_scores_mse = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
-#                                   scoring='neg_mean_squared_error')
-scores_abs = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
-                               scoring='neg_median_absolute_error')
-#dummy_scores_mse = np.array(dummy_scores_mse)
-#dummy_scores_r2 = np.array(dummy_scores_r2)
-#dummy_scores_variance = np.array(dummy_scores_variance)
-
-#dummies = pd.DataFrame()
-
-#dummies['mse'] = dummy_scores_mse
-#dummies['r2'] = dummy_scores_r2
-#dummies['var'] = dummy_scores_variance
-
-#sns.lineplot(data=dummies)
-
-#plt.show()
-
-# sns.lineplot([dummy_scores_mse, dummy_scores_r2, dummy_scores_variance], [np.linspace(0.0, 1.0, 100)])
-# plt.show()
+    # estimator = rcv.best_estimator_
 
 
-predictions = model.predict(d['x'])
+    plot_learning_curve(estimator, 'Learning Curves - GradientBoostingRegressor', X, Y, (.75, 1.01),
+                        cv=KFold(n_splits=10, random_state=r_state), n_jobs=8)
+
+    plt.show()
+
+    model = fit_model(X, Y, estimator=estimator)
+    #dummy_model = fit_model(X, Y, dummy_estimator)
+
+    scores_r2 = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8, scoring='r2')
+    scores_variance = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
+                                      scoring='explained_variance')
+    scores_mse = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
+                                 scoring='neg_mean_squared_error')
+
+    #dummy_scores_r2 = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
+    #                                  scoring='r2')
+    #dummy_scores_variance = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state),
+    #                                        n_jobs=8, scoring='explained_variance')
+    #dummy_scores_mse = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
+    #                                   scoring='neg_mean_squared_error')
+    scores_abs = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
+                                   scoring='neg_median_absolute_error')
+    #dummy_scores_mse = np.array(dummy_scores_mse)
+    #dummy_scores_r2 = np.array(dummy_scores_r2)
+    #dummy_scores_variance = np.array(dummy_scores_variance)
+
+    #dummies = pd.DataFrame()
+
+    #dummies['mse'] = dummy_scores_mse
+    #dummies['r2'] = dummy_scores_r2
+    #dummies['var'] = dummy_scores_variance
+
+    #sns.lineplot(data=dummies)
+
+    #plt.show()
+
+    # sns.lineplot([dummy_scores_mse, dummy_scores_r2, dummy_scores_variance], [np.linspace(0.0, 1.0, 100)])
+    # plt.show()
 
 
-
-scores_training_data = cross_val_score(model, d['X'], d['Y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
-                                       scoring='r2')
-
-if not _exclude_price_trans:
-    try:
-        predicted_prices = power_transform_price.inverse_transform(np.array(predictions).reshape(-1, 1))
-        seen_prices = power_transform_price.inverse_transform(np.array(y).reshape(-1, 1))
-        seen_prices = np.array(seen_prices).flatten()
-        predicted_prices = np.array(predicted_prices).flatten()
-    except:
-        raise Exception
-else:
-    predicted_prices = predictions
-    seen_prices = y
-
-dummy_name = get_estimator_name(dummy_estimator)
-name = get_estimator_name(model)
-
-_accuracy = "%s | R2: %0.4f (+/- %0.3f)" % (name, scores_r2.mean(), scores_r2.std() * 2)
-#_accuracy_dummy = "%s | R2: %0.4f (+/- %0.3f)" % (dummy_name, dummy_scores_r2.mean(), dummy_scores_r2.std() * 2)
-
-_accuracy_variance = "Explained Variance: %0.4f (+/- %0.3f)" % (scores_variance.mean(), scores_variance.std() * 2)
-_accuracy_mse = "MSE: %0.4f (+/- %0.3f)" % (scores_mse.mean(), scores_mse.std() * 2)
-
-_accuracy_max = "Accuracy Max: %0.4f" % (scores_r2.max())
-
-_accuracy_training = "Training Accuracy: %0.4f (+/- %0.3f)" % (
-    scores_training_data.mean(), scores_training_data.std() * 2)
+    predictions = model.predict(d['x'])
 
 
 
-if  _exclude_price_tuning and _exclude_price_trans:
-    _mean_abs = scores_abs.mean()
-    _std_abs = scores_abs.std()
-elif  not _exclude_price_tuning and _exclude_price_trans:
-    _mean_abs = np.multiply(np.array(scores_abs.mean()), 1000.0)
-    _std_abs = np.multiply(np.array(scores_abs.std()), 1000.0)
-elif not _exclude_price_trans:
-    _mean_abs = np.multiply(np.array(power_transform_price._scaler.mean_), 1000.0)
-    _std_abs = np.multiply(np.array(power_transform_price._scaler.scale_), 1000.0)
+    scores_training_data = cross_val_score(model, d['X'], d['Y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
+                                           scoring='r2')
+
+    if not _exclude_price_trans:
+        try:
+            predicted_prices = power_transform_price.inverse_transform(np.array(predictions).reshape(-1, 1))
+            seen_prices = power_transform_price.inverse_transform(np.array(y).reshape(-1, 1))
+            seen_prices = np.array(seen_prices).flatten()
+            predicted_prices = np.array(predicted_prices).flatten()
+        except:
+            raise Exception
+    else:
+        predicted_prices = predictions
+        seen_prices = y
+
+    dummy_name = get_estimator_name(dummy_estimator)
+    name = get_estimator_name(model)
+
+    _accuracy = "%s | R2: %0.4f (+/- %0.3f)" % (name, scores_r2.mean(), scores_r2.std() * 2)
+    #_accuracy_dummy = "%s | R2: %0.4f (+/- %0.3f)" % (dummy_name, dummy_scores_r2.mean(), dummy_scores_r2.std() * 2)
+
+    _accuracy_variance = "Explained Variance: %0.4f (+/- %0.3f)" % (scores_variance.mean(), scores_variance.std() * 2)
+    _accuracy_mse = "MSE: %0.4f (+/- %0.3f)" % (scores_mse.mean(), scores_mse.std() * 2)
+
+    _accuracy_max = "Accuracy Max: %0.4f" % (scores_r2.max())
+
+    _accuracy_training = "Training Accuracy: %0.4f (+/- %0.3f)" % (
+        scores_training_data.mean(), scores_training_data.std() * 2)
 
 
 
-_mean_abs_percent_error = "\n MAE: %0.0f NOK (+/- %0f)\n R2: %0.3f (+/- %0.2f)" % (_mean_abs, _std_abs, scores_r2.mean(), scores_r2.std())
+    if  _exclude_price_tuning and _exclude_price_trans:
+        _mean_abs = scores_abs.mean()
+        _std_abs = scores_abs.std()
+    elif  not _exclude_price_tuning and _exclude_price_trans:
+        _mean_abs = np.multiply(np.array(scores_abs.mean()), 1000.0)
+        _std_abs = np.multiply(np.array(scores_abs.std()), 1000.0)
+    elif not _exclude_price_trans:
+        _mean_abs = np.multiply(np.array(power_transform_price._scaler.mean_), 1000.0)
+        _std_abs = np.multiply(np.array(power_transform_price._scaler.scale_), 1000.0)
 
 
-plot_price_regression(predicted_prices, seen_prices, _accuracy)
 
-#dummy_predict = dummy_estimator.predict(x)
+    _mean_abs_percent_error = "\n MAE: %0.0f NOK (+/- %0f)\n R2: %0.3f (+/- %0.2f)" % (_mean_abs, _std_abs, scores_r2.mean(), scores_r2.std())
 
-#dummy_predict = power_transform_price.inverse_transform(np.array(dummy_predict).reshape(-1, 1))
-#dummy_predict = np.array(dummy_predict).flatten()
 
-#plot_price_regression(dummy_predict, seen_prices, _accuracy_dummy)
+    plot_price_regression(predicted_prices, seen_prices, _accuracy)
 
-print(_accuracy)
-print(_accuracy_mse)
-print(_accuracy_variance)
+    #dummy_predict = dummy_estimator.predict(x)
 
-print(_accuracy_max)
-print(_accuracy_training)
+    #dummy_predict = power_transform_price.inverse_transform(np.array(dummy_predict).reshape(-1, 1))
+    #dummy_predict = np.array(dummy_predict).flatten()
 
-save_accuracy_log(scores_r2, estimator)
+    #plot_price_regression(dummy_predict, seen_prices, _accuracy_dummy)
 
-def describe_split():
-    # Data to plot
-    labels =   ['Training Set, n=' + str(len(X)),'Testing Set, n=' + str(len(x))]
-    sizes = [len(X), len(x)]
-    colors = ['lightgreen', 'lightskyblue']
+    print(_accuracy)
+    print(_accuracy_mse)
+    print(_accuracy_variance)
 
-    # Plot
-    plt.pie(sizes, labels=labels, colors=colors,
-            autopct='%1.1f%%', shadow=True, startangle=140)
+    print(_accuracy_max)
+    print(_accuracy_training)
 
-    plt.axis('equal')
-    plt.title('Ratio of Split')
+    save_accuracy_log(scores_r2, estimator)
+
+    def describe_split():
+        # Data to plot
+        labels =   ['Training Set, n=' + str(len(X)),'Testing Set, n=' + str(len(x))]
+        sizes = [len(X), len(x)]
+        colors = ['lightgreen', 'lightskyblue']
+
+        # Plot
+        plt.pie(sizes, labels=labels, colors=colors,
+                autopct='%1.1f%%', shadow=True, startangle=140)
+
+        plt.axis('equal')
+        plt.title('Ratio of Split')
+        plt.show()
+
+
+    describe_split()
     plt.show()
 
 
-describe_split()
-plt.show()
+
+
+    plot_dist(x=data_orig['price'], title='Original Price Distribution' + str(_mean_abs_percent_error))
+
+    plot_dist(x=Y, title='New Price Distribution' + str(_mean_abs_percent_error))
+
+
+    feat_importances = pd.Series(model.feature_importances_, index=data.columns)
+    feat_importances.nlargest(6).plot(kind='barh')
+
+    plt.show()
+
+    print(model.get_params())
+    print(x.columns)
+    print(model.feature_importances_)
+
+    print(data.info(verbose=True))
+
+    print(data.corr())
+    if not _exclude_price_trans:
+        try:
+            full_data = data
+            full_data['price'] = power_transform_price.inverse_transform(np.array(label).reshape(-1, 1))
+            sample = full_data.sample(999)
+            sample.to_csv('../sample.csv')
+        except:
+            raise Exception
+
+    d['x']['p'] = predicted_prices
+
+
+    print(d['x'])
+
+    # run(path, X_train, Y_train, X_test, Y_test)
+else:
+
+
+    import numpy
+    import pandas
+    from keras.models import Sequential
+    from keras.layers import Dense
+    from keras.wrappers.scikit_learn import KerasRegressor
+    from sklearn.model_selection import cross_val_score
+    from sklearn.model_selection import KFold
+    from keras import callbacks
+    from keras import losses
+    import talos as ta
+    from statsmodels import robust
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.pipeline import Pipeline
+    # define base model
+    from numpy.random import seed
+
+    seed(42)
+    from tensorflow import set_random_seed
+
+    set_random_seed(42)
 
 
 
+        # create model
+    model = Sequential()
+    model.add(Dense(505, input_dim=505, kernel_initializer='normal', activation='relu'))
+    #model.add(Dense(1024, kernel_initializer='normal'))
+    model.add(Dense(256, kernel_initializer='normal'))
+    model.add(Dense(512, kernel_initializer='normal'))
+    model.add(Dense(256, kernel_initializer='normal'))
+    model.add(Dense(64, kernel_initializer='normal'))
+    model.add(Dense(16, kernel_initializer='normal'))
+    model.add(Dense(1, kernel_initializer='normal', activation='linear'))
+    # Compile model
+    model.compile(loss=losses.mean_squared_error, optimizer='adam')
+    model.summary()
 
-plot_dist(x=data_orig['price'], title='Original Price Distribution' + str(_mean_abs_percent_error))
-
-plot_dist(x=Y, title='New Price Distribution' + str(_mean_abs_percent_error))
-
-
-feat_importances = pd.Series(model.feature_importances_, index=data.columns)
-feat_importances.nlargest(6).plot(kind='barh')
-
-plt.show()
-
-print(model.get_params())
-print(x.columns)
-print(model.feature_importances_)
-
-print(data.info(verbose=True))
-
-print(data.corr())
-if not _exclude_price_trans:
-    try:
-        full_data = data
-        full_data['price'] = power_transform_price.inverse_transform(np.array(label).reshape(-1, 1))
-        sample = full_data.sample(999)
-        sample.to_csv('../sample.csv')
-    except:
-        raise Exception
-
-d['x']['p'] = predicted_prices
+    callback = callbacks.EarlyStopping(monitor='loss',
+                                  min_delta=0.03,
+                                  patience=0,
+                                  verbose=1, mode='auto')
 
 
-print(d['x'])
+    # fix random seed for reproducibility
 
-# run(path, X_train, Y_train, X_test, Y_test)
+    # evaluate model with standardized dataset
+    print(Y.head())
+    print(y.head())
+    history = model.fit(X, Y, epochs=128, batch_size=16, verbose=0, callbacks=[callback])
+    print(history.history)
+    y_predict = model.predict(x)
+
+    p_data = pd.DataFrame(data=y_predict, columns=['price'])
+    abs = np.multiply(power_transform_price.inverse_transform(p_data), 1000.0)
+
+    y_rev = np.multiply(power_transform_price.inverse_transform(np.array(d['y']).reshape(-1, 1)), 1000.0)
+
+    print(np.mean(y_rev - abs))
+
+
+   #kfold = KFold(n_splits=2, random_state=seed)
+   # results = cross_val_score(estimator, x, y, cv=kfold, scoring='neg_mean_absolute_error')
+
+    #print(results.mean())
+    #mean = results.mean()
+
+    #print("Results: min: %.2f max: %.2f MAE" % (_mean_abs.min(), _mean_abs.max()))
