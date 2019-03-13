@@ -17,7 +17,7 @@ from sklearn.dummy import DummyRegressor
 import statsmodels
 from sklearn.tree import DecisionTreeRegressor
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation
+from keras.layers.core import Dense, Activation, ActivityRegularization
 from keras.utils import np_utils
 
 
@@ -115,14 +115,13 @@ def preprocess(data):
         print_dataset_stats(data)
     if not _exclude_param_tuning:
         data['price'] = data['price'].astype(np.float)
-        if not _exclude_price_tuning:
-            data['price'] = np.round(data['price'], -3)
-            data['price'] = np.divide(data['price'], 1000)
-            data = data[data.price < 950]
-            data = data[data.price > 15]
+
+
         data['km'] = data['km'].astype(np.float)
         data['km'] = np.round(data['km'], -3)
         data['km'] = np.divide(data['km'], 1000)
+        data['price'] = np.round(data['price'], -3)
+        data['price'] = np.divide(data['price'], 100000)
         data = data[data.model_year > 1985]
 
         data = data[(((data.model_year >= 2017) & (data.price > 15)) | (data.model_year < 2017))]
@@ -131,11 +130,12 @@ def preprocess(data):
         data = data[data.km < 350]
         data = data[data.power > 0]
         data = data[data.power < 500]
-        if(not _exclude_price_trans):
-            power_transform_price.fit(data.loc[:, 'price'].values.reshape(-1, 1))
-            power_transform_price._scaler.with_std = True
+        #if(not _exclude_price_trans):
+            #power_transform_price.fit(data.loc[:, 'price'].values.reshape(-1, 1))
+            #power_transform_price._scaler.with_std = True
 
-            data['price'] = power_transform_price.transform(data.loc[:, 'price'].values.reshape(-1, 1))
+
+            #data['price'] = power_transform_price.transform(data.loc[:, 'price'].values.reshape(-1, 1))
         data['model_age'] = (date.today().year - data['model_year'])
         indices = data[(data['fuel_type'] == 'Diesel') & (data['cylinder'] == 0)].index
         data.drop(indices, inplace=True)
@@ -148,7 +148,7 @@ def preprocess(data):
 
     # global power_transform_price
 
-    min_max = preprocessing.MinMaxScaler()
+    min_max = preprocessing.StandardScaler()
 
     data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', 'cylinder']])
 
@@ -202,11 +202,13 @@ def preprocess(data):
         one_hot_cols = ['trans', 'fuel_type', 'gear', 'manufacturer', 'model']  # Nominals with low cardinality
         data = pd.get_dummies(data, columns=one_hot_cols)
 
-    # data = data.drop(columns=['model'])
+    #data = data.drop(columns=['model'])
     data = data.drop(columns=['model_year'])
-    # data = data.drop(columns=['manufacturer'])
-    # data = data.drop(columns=['fuel_type'])
-    # data = data.drop(columns=['gear'])
+    #data = data.drop(columns=['manufacturer'])
+    #data = data.drop(columns=['fuel_type'])
+    #data = data.drop(columns=['gear'])
+    #data = data.drop(columns=['trans'])
+    data = data.drop(columns=['finn_code'])
     # data = data.drop(columns=['cylinder'])
 
     if _print_processed_dataset_stats:
@@ -640,11 +642,13 @@ if not _keras:
     # run(path, X_train, Y_train, X_test, Y_test)
 else:
 
-
     import numpy
     import pandas
     from keras.models import Sequential
-    from keras.layers import Dense
+    from keras.layers import Dense, BatchNormalization
+    from keras.layers import Activation as a
+    import keras as ks
+    from keras import backend as K
     from keras.wrappers.scikit_learn import KerasRegressor
     from sklearn.model_selection import cross_val_score
     from sklearn.model_selection import KFold
@@ -656,6 +660,9 @@ else:
     from sklearn.pipeline import Pipeline
     # define base model
     from numpy.random import seed
+    import tensorflow as tf
+
+    tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
     seed(42)
     from tensorflow import set_random_seed
@@ -663,42 +670,107 @@ else:
     set_random_seed(42)
 
 
+    class MyLogger(ks.callbacks.Callback):
+        def __init__(self, n):
+            super().__init__()
+            self.n = n  # print loss & acc every n epochs
 
-        # create model
-    model = Sequential()
-    model.add(Dense(505, input_dim=505, kernel_initializer='normal', activation='relu'))
-    #model.add(Dense(1024, kernel_initializer='normal'))
-    model.add(Dense(256, kernel_initializer='normal'))
-    model.add(Dense(512, kernel_initializer='normal'))
-    model.add(Dense(256, kernel_initializer='normal'))
-    model.add(Dense(64, kernel_initializer='normal'))
-    model.add(Dense(16, kernel_initializer='normal'))
-    model.add(Dense(1, kernel_initializer='normal', activation='linear'))
-    # Compile model
-    model.compile(loss=losses.mean_squared_error, optimizer='adam')
-    model.summary()
+        def on_epoch_end(self, epoch, logs={}):
+            if epoch % self.n == 0:
+                curr_loss = logs.get('val_loss')
 
-    callback = callbacks.EarlyStopping(monitor='loss',
-                                  min_delta=0.03,
-                                  patience=0,
-                                  verbose=1, mode='auto')
+
+                print("epoch = %4d  loss = %0.5f" \
+                      % (epoch, curr_loss))
+
+    def optimize():
+
+        p = {'activation': [K.relu],
+             'optimizer': ['nadam'],
+             'losses': ['mean_squared_error'],
+             'hidden_layers': [4],
+             'batch_size': [128],
+             'epochs': [60],
+             'layer_size': [23]}
+
+        def price_model(x_train, y_train, x_val, y_val, params):
+            my_logger = MyLogger(n=1)
+
+            print(x_train.head())
+            model = Sequential()
+
+            model.add(Dense(96, input_dim=x_train.shape[1],activation=params['activation']))
+            model.add(Dense(58, activation=params['activation']))
+            model.add(Dense(params['layer_size'], activation=params['activation']))
+            model.add(Dense(7, activation=params['activation']))
+
+
+            #model.add(ActivityRegularization(l1=0.01, l2=0.01))
+
+            model.add(Dense(1, activation='linear'))
+            model.compile(optimizer=params['optimizer'], loss=params['losses'], metrics=['mean_squared_error'])
+
+            out = model.fit(x_train, y_train,
+                            batch_size=params['batch_size'],
+                            epochs=params['epochs'],
+                            validation_data=[x_val, y_val],
+                            callbacks=[my_logger],
+                            verbose=1)
+
+            print(d['x'].head())
+
+            y_predict = model.predict(d['x'])
+            print(np.mean(np.abs(y_predict - y.values)))
+            p_data = pd.DataFrame(data=y_predict, columns=['price'])
+            abs = p_data
+
+            y_rev = np.array(d['y']).reshape(-1, 1)
+
+            print(np.mean(y_rev - abs))
+
+            plt.plot(out.history['loss'])
+            plt.plot(out.history['val_loss'])
+            plt.title('MAE: %.2f' % (np.median(out.history['val_loss'])))
+
+            # print("Results: min: %.2f max: %.2f MAE" % (_mean_abs.min(), _mean_abs.max()))
+            plt.ylabel('Loss')
+            plt.xlabel('Epoch')
+            plt.legend(['Train', 'Test'], loc='upper left')
+            plt.show()
+
+
+
+            return out, model
+
+        scan_object = ta.Scan(x=X, y=Y.values, x_val=x, y_val=y.values, model=price_model, params=p, print_params=True, grid_downsample=10)
+
+
+
+        return scan_object
+
+    e = ta.Evaluate(optimize())
+
+
+
+    #e.evaluate(X, Y.values, mode='regression', print_out=True, metric='mean_absolute_error', asc=True)
+
+
+
 
 
     # fix random seed for reproducibility
 
     # evaluate model with standardized dataset
-    print(Y.head())
-    print(y.head())
-    history = model.fit(X, Y, epochs=128, batch_size=16, verbose=0, callbacks=[callback])
-    print(history.history)
-    y_predict = model.predict(x)
+    #print(Y.head())
+    #print(y.head())
+    #y_predict = model.predict(x)
 
-    p_data = pd.DataFrame(data=y_predict, columns=['price'])
-    abs = np.multiply(power_transform_price.inverse_transform(p_data), 1000.0)
+    #p_data = pd.DataFrame(data=y_predict, columns=['price'])
+    #abs = np.multiply(power_transform_price.inverse_transform(p_data), 1000.0)
 
-    y_rev = np.multiply(power_transform_price.inverse_transform(np.array(d['y']).reshape(-1, 1)), 1000.0)
+    #y_rev = np.multiply(power_transform_price.inverse_transform(np.array(d['y']).reshape(-1, 1)), 1000.0)
 
-    print(np.mean(y_rev - abs))
+    #print(np.mean(y_rev - abs))
 
 
    #kfold = KFold(n_splits=2, random_state=seed)
