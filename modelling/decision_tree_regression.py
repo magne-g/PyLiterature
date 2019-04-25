@@ -6,18 +6,21 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from IPython.core.interactiveshell import InteractiveShell
+import sklearn as sklearn
 from matplotlib import pyplot as plt
 from sklearn import preprocessing
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor, AdaBoostRegressor
 from sklearn.externals.six import StringIO
-from sklearn.linear_model import Lasso
+from sklearn.linear_model import Lasso, BayesianRidge
 from sklearn.model_selection import cross_val_score, GridSearchCV, KFold, learning_curve, train_test_split, \
     validation_curve
 from sklearn.dummy import DummyRegressor
 import statsmodels
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation, ActivityRegularization
+from sklearn import svm
+from keras.layers.core import Dense, Activation, ActivityRegularization, Dropout
 from keras.utils import np_utils
 
 
@@ -36,6 +39,14 @@ _exclude_price_trans = False
 _exclude_price_tuning = False
 _keras = True
 _verbose = 1
+regressor = None
+_alg = 'random_forest'
+#_alg = 'grad_boost_tree'
+#_alg = 'support_vector'
+#_alg = 'bayes'
+# _alg = 'trees'
+# _alg = 'neural'
+#_alg = 'k_neighbor'
 
 _important_data = '{}'
 alpha = 1.0
@@ -51,7 +62,7 @@ pd.set_option('display.max_info_columns', 500)
 pd.set_option('use_inf_as_na', True)
 
 dot_data = StringIO()
-r_state = np.random.RandomState(42)
+rng = np.random.RandomState(42)
 X_train, X_test, Y_train, Y_test = [0] * 4
 
 
@@ -254,7 +265,7 @@ def split_data(data, label, test_size=0.2):
     X_train, X_test, Y_train, Y_test = train_test_split(data,
                                                         label,
                                                         test_size=test_size,
-                                                        random_state=r_state)
+                                                        random_state=rng)
 
     return X_train, X_test, Y_train, Y_test
 
@@ -302,7 +313,7 @@ def plot_learning_curve(estimator, title, X, y, ylim=(0.85, 1), cv=None,
     plt.xlabel("Training examples")
     plt.ylabel("Score")
     train_sizes, train_scores, test_scores = learning_curve(
-        estimator, X, y, n_jobs=n_jobs, train_sizes=train_sizes, scoring='r2', random_state=r_state)
+        estimator, X, y, n_jobs=n_jobs, train_sizes=train_sizes, scoring='r2', random_state=rng)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     test_scores_mean = np.mean(test_scores, axis=1)
@@ -439,14 +450,14 @@ d = {'X': X, 'x': x, 'Y': Y, 'y': y}
 
 #estimator = define_estimator(d, RandomForestRegressor(random_state=r_state, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
 
-if not _keras:
+if _alg in '_keras':
 
     estimator = GradientBoostingRegressor(loss='ls',
-                                        alpha=0.9,
+                                          alpha=0.9,
                                           max_depth=5,
                                           max_features='auto',
                                           n_estimators=300,
-                                          random_state=r_state,
+                                          random_state=rng,
                                           learning_rate=0.1,
                                           min_samples_split=2,
                                           min_samples_leaf=1)
@@ -480,17 +491,17 @@ if not _keras:
 
 
     plot_learning_curve(estimator, 'Learning Curves - GradientBoostingRegressor', X, Y, (.75, 1.01),
-                        cv=KFold(n_splits=10, random_state=r_state), n_jobs=8)
+                        cv=KFold(n_splits=10, random_state=rng), n_jobs=8)
 
     plt.show()
 
     model = fit_model(X, Y, estimator=estimator)
     #dummy_model = fit_model(X, Y, dummy_estimator)
 
-    scores_r2 = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8, scoring='r2')
-    scores_variance = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
+    scores_r2 = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8, scoring='r2')
+    scores_variance = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8,
                                       scoring='explained_variance')
-    scores_mse = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
+    scores_mse = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8,
                                  scoring='neg_mean_squared_error')
 
     #dummy_scores_r2 = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
@@ -499,8 +510,8 @@ if not _keras:
     #                                        n_jobs=8, scoring='explained_variance')
     #dummy_scores_mse = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
     #                                   scoring='neg_mean_squared_error')
-    scores_abs = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
-                                   scoring='neg_median_absolute_error')
+    scores_abs = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8,
+                                 scoring='neg_median_absolute_error')
     #dummy_scores_mse = np.array(dummy_scores_mse)
     #dummy_scores_r2 = np.array(dummy_scores_r2)
     #dummy_scores_variance = np.array(dummy_scores_variance)
@@ -523,7 +534,7 @@ if not _keras:
 
 
 
-    scores_training_data = cross_val_score(model, d['X'], d['Y'], cv=KFold(n_splits=10, random_state=r_state), n_jobs=8,
+    scores_training_data = cross_val_score(model, d['X'], d['Y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8,
                                            scoring='r2')
 
     if not _exclude_price_trans:
@@ -640,7 +651,7 @@ if not _keras:
     print(d['x'])
 
     # run(path, X_train, Y_train, X_test, Y_test)
-else:
+elif _alg in 'neural':
 
     import numpy
     import pandas
@@ -663,7 +674,6 @@ else:
     import tensorflow as tf
 
     tf.Session(config=tf.ConfigProto(log_device_placement=True))
-
     seed(42)
     from tensorflow import set_random_seed
 
@@ -687,10 +697,10 @@ else:
 
         p = {'activation': [K.relu],
              'optimizer': ['nadam'],
-             'losses': ['mean_squared_error'],
+             'losses': ['mean_absolute_error'],
              'hidden_layers': [4],
-             'batch_size': [128],
-             'epochs': [60],
+             'batch_size': [16],
+             'epochs': [100],
              'layer_size': [23]}
 
         def price_model(x_train, y_train, x_val, y_val, params):
@@ -699,16 +709,12 @@ else:
             print(x_train.head())
             model = Sequential()
 
-            model.add(Dense(96, input_dim=x_train.shape[1],activation=params['activation']))
-            model.add(Dense(58, activation=params['activation']))
-            model.add(Dense(params['layer_size'], activation=params['activation']))
-            model.add(Dense(7, activation=params['activation']))
-
-
-            #model.add(ActivityRegularization(l1=0.01, l2=0.01))
-
-            model.add(Dense(1, activation='linear'))
-            model.compile(optimizer=params['optimizer'], loss=params['losses'], metrics=['mean_squared_error'])
+            model.add(Dense(x_train.shape[1], input_dim=x_train.shape[1],activation=params['activation']))
+            model.add(Dropout(0.33))
+            model.add(Dense(8, activation=params['activation']))
+            #model.add(Dropout(0.33))
+            model.add(Dense(1, activation='relu'))
+            model.compile(optimizer=params['optimizer'], loss=params['losses'], metrics=['mean_absolute_error'])
 
             out = model.fit(x_train, y_train,
                             batch_size=params['batch_size'],
@@ -728,9 +734,11 @@ else:
 
             print(np.mean(y_rev - abs))
 
+            plt.ylim(bottom=15, top=35)
+
             plt.plot(out.history['loss'])
             plt.plot(out.history['val_loss'])
-            plt.title('MAE: %.2f' % (np.median(out.history['val_loss'])))
+            plt.title('Mean Absolute Error: %.2f' % (np.median(out.history['val_loss'])))
 
             # print("Results: min: %.2f max: %.2f MAE" % (_mean_abs.min(), _mean_abs.max()))
             plt.ylabel('Loss')
@@ -742,7 +750,7 @@ else:
 
             return out, model
 
-        scan_object = ta.Scan(x=X, y=Y.values, x_val=x, y_val=y.values, model=price_model, params=p, print_params=True, grid_downsample=10)
+        scan_object = ta.Scan(x=X, y=Y.values, x_val=x, y_val=y.values, model=price_model, params=p, print_params=True)
 
 
 
@@ -780,3 +788,165 @@ else:
     #mean = results.mean()
 
     #print("Results: min: %.2f max: %.2f MAE" % (_mean_abs.min(), _mean_abs.max()))
+
+
+
+elif _alg == 'support_vector':
+    # SVR
+
+    """
+    parameters = {'kernel':('linear', 'rbf'), 'C':[1.5, 10], 'gamma':[1e-7, 1e-4], 'epsilon':[0.1,0.2,0.3,0.5]}
+    svr = svm.SVR()
+    clf = GridSearchCV(svr, parameters, verbose=2, n_jobs=-1)
+    clf.fit(X, Y)
+    clf.best_params_
+    """
+
+    # parameters = {'kernel':('linear', 'rbf'), 'C':[0.01, 0.1, 1, 10], 'gamma':[1e-7, 1e-4, 0.001, 0.1], 'epsilon':[0.3,0.4]}
+
+    #parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
+
+#             {'kernel': ['linear'], 'C': [0.01, 0.1, 1, 10], 'epsilon': [0.1, 0.3, 0.4]}]
+
+    #parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
+ #                 {'kernel': ['poly'], 'C': [0.01, 0.1, 1, 10, 100], 'epsilon': [0.001, 0.01, 0.1],
+  #                 'degree': [3], 'coef0': [1]}]
+
+    svr = svm.SVR()
+   # clf = GridSearchCV(svr, parameters, verbose=2, n_jobs=-1)
+   # clf.fit(X, Y)
+   # print(_alg)
+   # print(clf.best_params_)
+   # best_params = clf.best_params_
+
+    # use best_params_
+    #if best_params['kernel'] == 'rbf':
+    #    regressor = svm.SVR(kernel=best_params['kernel'], C=best_params['C'], gamma=best_params['gamma'])
+    #else:
+    #    regressor = svm.SVR(kernel=best_params['kernel'], C=best_params['C'], epsilon=best_params['epsilon'])
+    #regressor = svm.SVR(kernel='poly', C=100, gamma='auto', degree=3, epsilon=.1, coef0=1)
+    #regressor.fit(X, Y)
+
+    # regressor = svm.SVR(kernel='rbf', C=10, epsilon=0.3, gamma=0.1)
+    # regressor.fit(X, Y)
+
+    # better
+    regressor = svm.SVR(kernel='rbf', C=100, epsilon=0.3, gamma=0.01)
+    regressor.fit(X, Y)
+
+    # regressor = svm.SVR(kernel='linear', C=1.5, epsilon=0.3, gamma=1e-07)
+    # regressor.fit(X, Y)
+
+
+elif _alg == 'grad_boost_tree':
+    # BayesianRidge
+
+    #parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+     #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+     #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}
+
+    #bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
+    #bayes.fit(X, Y)
+    #print(_alg)
+    #print(bayes.best_params_)
+    #best_params = bayes.best_params_
+
+    # use best_params_
+    #regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
+                             # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
+    #regressor.fit(X, Y)
+
+    regressor = GradientBoostingRegressor()
+    regressor.fit(X, Y)
+
+elif _alg == 'bayes':
+    # BayesianRidge
+
+    # parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+    #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+    #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}
+    br = BayesianRidge()
+    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
+    # bayes.fit(X, Y)
+    # print(_alg)
+    # print(bayes.best_params_)
+    # best_params = bayes.best_params_
+
+    # use best_params_
+    # regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
+    # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
+    # regressor.fit(X, Y)
+
+    regressor = BayesianRidge(compute_score=True, alpha_1=1e-04, alpha_2=1e-07, lambda_1=1e-07, lambda_2=1e-04)
+    regressor.fit(X, Y)
+elif _alg == 'random_forest':
+    # BayesianRidge
+
+    # parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+    #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+    #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
+    # bayes.fit(X, Y)
+    # print(_alg)
+    # print(bayes.best_params_)
+    # best_params = bayes.best_params_
+
+    # use best_params_
+    # regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
+    # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
+    # regressor.fit(X, Y)
+
+    regressor = RandomForestRegressor()
+    regressor.fit(X, Y)
+elif _alg == 'regression_tree':
+    # BayesianRidge
+
+    # parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+    #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+    #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
+    # bayes.fit(X, Y)
+    # print(_alg)
+    # print(bayes.best_params_)
+    # best_params = bayes.best_params_
+
+    # use best_params_
+    # regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
+    # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
+    # regressor.fit(X, Y)
+
+    regressor = DecisionTreeRegressor()
+    regressor.fit(X, Y)
+
+
+else:
+    # KNeighborRegressor
+
+    parameters = {'n_neighbors': [3, 4, 5, 6, 7, 8, 9], 'weights': ['uniform', 'distance'],
+                  'leaf_size': [20, 30, 35, 40, 45, 50]}
+    knr = KNeighborsRegressor()
+  #  neigh = GridSearchCV(knr, parameters, verbose=2, n_jobs=-1)
+  #  neigh.fit(X, Y)
+  #  print(_alg)
+  #  print(neigh.best_params_)
+  #  best_params = neigh.best_params_
+
+ # use best_params_
+  #  regressor = KNeighborsRegressor(n_neighbors=best_params['n_neighbors'], weights=best_params['weights'],
+                                   # leaf_size=best_params['leaf_size'], n_jobs=-1)
+   # regressor.fit(X, Y)
+
+    regressor = KNeighborsRegressor(n_neighbors=5, weights='distance', leaf_size=40, n_jobs=-1)
+    regressor.fit(X,Y)
+
+print(regressor)
+predictions = regressor.predict(x)
+# confidence = regressor.score(x,y)
+# print(confidence)
+
+scores = cross_val_score(regressor, x, y,
+                         cv=KFold(n_splits=10, random_state=rng),
+                         n_jobs=-1, scoring='neg_median_absolute_error')
+print(scores)
+
+accuracy = "Accuracy: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
+print(accuracy)
+ax = sns.regplot(y, predictions, fit_reg=True, robust=True)
