@@ -11,12 +11,15 @@ from matplotlib import pyplot as plt
 from sklearn import preprocessing
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor, AdaBoostRegressor
 from sklearn.externals.six import StringIO
-from sklearn.linear_model import Lasso, BayesianRidge
+from sklearn.isotonic import IsotonicRegression
+from sklearn.linear_model import Lasso, BayesianRidge, LogisticRegression, ElasticNet, Lars, LassoLars, \
+    OrthogonalMatchingPursuit, ARDRegression
 from sklearn.model_selection import cross_val_score, GridSearchCV, KFold, learning_curve, train_test_split, \
     validation_curve
 from sklearn.dummy import DummyRegressor
 import statsmodels
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
 from sklearn.tree import DecisionTreeRegressor
 from keras.models import Sequential
 from sklearn import svm
@@ -130,9 +133,9 @@ def preprocess(data):
 
         data['km'] = data['km'].astype(np.float)
         data['km'] = np.round(data['km'], -3)
-        data['km'] = np.divide(data['km'], 1000)
+        data['km'] = np.divide(data['km'], 5000)
         data['price'] = np.round(data['price'], -3)
-        data['price'] = np.divide(data['price'], 100000)
+        data['price'] = np.divide(data['price'], 500000)
         data = data[data.model_year > 1985]
 
         data = data[(((data.model_year >= 2017) & (data.price > 15)) | (data.model_year < 2017))]
@@ -220,7 +223,7 @@ def preprocess(data):
     #data = data.drop(columns=['gear'])
     #data = data.drop(columns=['trans'])
     data = data.drop(columns=['finn_code'])
-    # data = data.drop(columns=['cylinder'])
+    data = data.drop(columns=['cylinder'])
 
     if _print_processed_dataset_stats:
         print('Processed Dataset Statistics:')
@@ -791,162 +794,186 @@ elif _alg in 'neural':
 
 
 
-elif _alg == 'support_vector':
-    # SVR
 
-    """
-    parameters = {'kernel':('linear', 'rbf'), 'C':[1.5, 10], 'gamma':[1e-7, 1e-4], 'epsilon':[0.1,0.2,0.3,0.5]}
-    svr = svm.SVR()
-    clf = GridSearchCV(svr, parameters, verbose=2, n_jobs=-1)
-    clf.fit(X, Y)
-    clf.best_params_
-    """
 
-    # parameters = {'kernel':('linear', 'rbf'), 'C':[0.01, 0.1, 1, 10], 'gamma':[1e-7, 1e-4, 0.001, 0.1], 'epsilon':[0.3,0.4]}
+# SVR
 
-    #parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
+"""
+parameters = {'kernel':('linear', 'rbf'), 'C':[1.5, 10], 'gamma':[1e-7, 1e-4], 'epsilon':[0.1,0.2,0.3,0.5]}
+svr = svm.SVR()
+clf = GridSearchCV(svr, parameters, verbose=2, n_jobs=-1)
+clf.fit(X, Y)
+clf.best_params_
+"""
+
+# parameters = {'kernel':('linear', 'rbf'), 'C':[0.01, 0.1, 1, 10], 'gamma':[1e-7, 1e-4, 0.001, 0.1], 'epsilon':[0.3,0.4]}
+
+#parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
 
 #             {'kernel': ['linear'], 'C': [0.01, 0.1, 1, 10], 'epsilon': [0.1, 0.3, 0.4]}]
 
-    #parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
- #                 {'kernel': ['poly'], 'C': [0.01, 0.1, 1, 10, 100], 'epsilon': [0.001, 0.01, 0.1],
-  #                 'degree': [3], 'coef0': [1]}]
+#parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
+#                 {'kernel': ['poly'], 'C': [0.01, 0.1, 1, 10, 100], 'epsilon': [0.001, 0.01, 0.1],
+#                 'degree': [3], 'coef0': [1]}]
 
-    svr = svm.SVR()
-   # clf = GridSearchCV(svr, parameters, verbose=2, n_jobs=-1)
-   # clf.fit(X, Y)
-   # print(_alg)
-   # print(clf.best_params_)
-   # best_params = clf.best_params_
+svr = svm.SVR()
+# clf = GridSearchCV(svr, parameters, verbose=2, n_jobs=-1)
+# clf.fit(X, Y)
+# print(_alg)
+# print(clf.best_params_)
+# best_params = clf.best_params_
 
-    # use best_params_
-    #if best_params['kernel'] == 'rbf':
-    #    regressor = svm.SVR(kernel=best_params['kernel'], C=best_params['C'], gamma=best_params['gamma'])
-    #else:
-    #    regressor = svm.SVR(kernel=best_params['kernel'], C=best_params['C'], epsilon=best_params['epsilon'])
-    #regressor = svm.SVR(kernel='poly', C=100, gamma='auto', degree=3, epsilon=.1, coef0=1)
-    #regressor.fit(X, Y)
+# use best_params_
+#if best_params['kernel'] == 'rbf':
+#    regressor = svm.SVR(kernel=best_params['kernel'], C=best_params['C'], gamma=best_params['gamma'])
+#else:
+#    regressor = svm.SVR(kernel=best_params['kernel'], C=best_params['C'], epsilon=best_params['epsilon'])
+#regressor = svm.SVR(kernel='poly', C=100, gamma='auto', degree=3, epsilon=.1, coef0=1)
+#regressor.fit(X, Y)
 
-    # regressor = svm.SVR(kernel='rbf', C=10, epsilon=0.3, gamma=0.1)
-    # regressor.fit(X, Y)
+# regressor = svm.SVR(kernel='rbf', C=10, epsilon=0.3, gamma=0.1)
+# regressor.fit(X, Y)
 
-    # better
-    regressor = svm.SVR(kernel='rbf', C=100, epsilon=0.3, gamma=0.01)
+# better
+regressor = svm.SVR(kernel='rbf', C=100, epsilon=0.3, gamma=0.01)
+regressor.fit(X, Y)
+
+# regressor = svm.SVR(kernel='linear', C=1.5, epsilon=0.3, gamma=1e-07)
+# regressor.fit(X, Y)
+
+
+
+# BayesianRidge
+
+#parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+ #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+ #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}
+
+#bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
+#bayes.fit(X, Y)
+#print(_alg)
+#print(bayes.best_params_)
+#best_params = bayes.best_params_
+
+# use best_params_
+#regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
+                         # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
+#regressor.fit(X, Y)
+
+regressor = GradientBoostingRegressor()
+regressor.fit(X, Y)
+
+
+# BayesianRidge
+
+# parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+#                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+#                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}
+# bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
+# bayes.fit(X, Y)
+# print(_alg)
+# print(bayes.best_params_)
+# best_params = bayes.best_params_
+
+# use best_params_
+# regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
+# lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
+# regressor.fit(X, Y)
+
+plt.show()
+
+regressor_list = []
+
+
+
+regressor_list.append(ElasticNet(random_state=rng))
+regressor_list.append(Lasso(random_state=rng))
+regressor_list.append(OrthogonalMatchingPursuit())
+regressor_list.append(BayesianRidge())
+regressor_list.append(RandomForestRegressor(random_state=rng))
+regressor_list.append(DecisionTreeRegressor(random_state=rng))
+regressor_list.append(KNeighborsRegressor())
+regressor_list.append(GradientBoostingRegressor(random_state=rng))
+regressor_list.append(MLPRegressor(random_state=rng))
+regressor_list.append(AdaBoostRegressor(random_state=rng))
+
+
+# BayesianRidge
+
+# parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+#                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+#                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
+# bayes.fit(X, Y)
+# print(_alg)
+# print(bayes.best_params_)
+# best_params = bayes.best_params_
+
+# use best_params_
+# regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
+# lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
+# regressor.fit(X, Y)
+
+
+
+# BayesianRidge
+
+# parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+#                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+#                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
+# bayes.fit(X, Y)
+# print(_alg)
+# print(bayes.best_params_)
+# best_params = bayes.best_params_
+
+# use best_params_
+# regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
+# lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
+# regressor.fit(X, Y)
+
+
+
+
+
+# KNeighborRegressor
+
+parameters = {'n_neighbors': [3, 4, 5, 6, 7, 8, 9], 'weights': ['uniform', 'distance'],
+              'leaf_size': [20, 30, 35, 40, 45, 50]}
+
+#  neigh = GridSearchCV(knr, parameters, verbose=2, n_jobs=-1)
+#  neigh.fit(X, Y)
+#  print(_alg)
+#  print(neigh.best_params_)
+#  best_params = neigh.best_params_
+
+# use best_params_
+#  regressor = KNeighborsRegressor(n_neighbors=best_params['n_neighbors'], weights=best_params['weights'],
+                               # leaf_size=best_params['leaf_size'], n_jobs=-1)
+# regressor.fit(X, Y)
+
+
+
+score_list = []
+estimator_list = []
+
+for regressor in regressor_list:
+    print(regressor)
     regressor.fit(X, Y)
 
-    # regressor = svm.SVR(kernel='linear', C=1.5, epsilon=0.3, gamma=1e-07)
-    # regressor.fit(X, Y)
+    predictions = regressor.predict(x)
+    # confidence = regressor.score(x,y)
+    # print(confidence)
+
+    scores = cross_val_score(regressor, x, y,
+                             cv=KFold(n_splits=5, random_state=rng),
+                             n_jobs=-1, scoring='neg_median_absolute_error')
+    print(scores)
+    score_list.append(scores.mean())
+    estimator_list.append(regressor.__class__.__name__)
+    accuracy = "MAE: %0.4f (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
+    print(accuracy)
+    #ax = sns.regplot(y, predictions, fit_reg=True, robust=True)
 
 
-elif _alg == 'grad_boost_tree':
-    # BayesianRidge
+sns.stripplot(y=estimator_list, x=score_list)
 
-    #parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-     #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-     #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}
-
-    #bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
-    #bayes.fit(X, Y)
-    #print(_alg)
-    #print(bayes.best_params_)
-    #best_params = bayes.best_params_
-
-    # use best_params_
-    #regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
-                             # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
-    #regressor.fit(X, Y)
-
-    regressor = GradientBoostingRegressor()
-    regressor.fit(X, Y)
-
-elif _alg == 'bayes':
-    # BayesianRidge
-
-    # parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-    #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-    #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}
-    br = BayesianRidge()
-    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
-    # bayes.fit(X, Y)
-    # print(_alg)
-    # print(bayes.best_params_)
-    # best_params = bayes.best_params_
-
-    # use best_params_
-    # regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
-    # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
-    # regressor.fit(X, Y)
-
-    regressor = BayesianRidge(compute_score=True, alpha_1=1e-04, alpha_2=1e-07, lambda_1=1e-07, lambda_2=1e-04)
-    regressor.fit(X, Y)
-elif _alg == 'random_forest':
-    # BayesianRidge
-
-    # parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-    #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-    #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
-    # bayes.fit(X, Y)
-    # print(_alg)
-    # print(bayes.best_params_)
-    # best_params = bayes.best_params_
-
-    # use best_params_
-    # regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
-    # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
-    # regressor.fit(X, Y)
-
-    regressor = RandomForestRegressor()
-    regressor.fit(X, Y)
-elif _alg == 'regression_tree':
-    # BayesianRidge
-
-    # parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-    #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-    #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
-    # bayes.fit(X, Y)
-    # print(_alg)
-    # print(bayes.best_params_)
-    # best_params = bayes.best_params_
-
-    # use best_params_
-    # regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
-    # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
-    # regressor.fit(X, Y)
-
-    regressor = DecisionTreeRegressor()
-    regressor.fit(X, Y)
-
-
-else:
-    # KNeighborRegressor
-
-    parameters = {'n_neighbors': [3, 4, 5, 6, 7, 8, 9], 'weights': ['uniform', 'distance'],
-                  'leaf_size': [20, 30, 35, 40, 45, 50]}
-    knr = KNeighborsRegressor()
-  #  neigh = GridSearchCV(knr, parameters, verbose=2, n_jobs=-1)
-  #  neigh.fit(X, Y)
-  #  print(_alg)
-  #  print(neigh.best_params_)
-  #  best_params = neigh.best_params_
-
- # use best_params_
-  #  regressor = KNeighborsRegressor(n_neighbors=best_params['n_neighbors'], weights=best_params['weights'],
-                                   # leaf_size=best_params['leaf_size'], n_jobs=-1)
-   # regressor.fit(X, Y)
-
-    regressor = KNeighborsRegressor(n_neighbors=5, weights='distance', leaf_size=40, n_jobs=-1)
-    regressor.fit(X,Y)
-
-print(regressor)
-predictions = regressor.predict(x)
-# confidence = regressor.score(x,y)
-# print(confidence)
-
-scores = cross_val_score(regressor, x, y,
-                         cv=KFold(n_splits=10, random_state=rng),
-                         n_jobs=-1, scoring='neg_median_absolute_error')
-print(scores)
-
-accuracy = "Accuracy: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
-print(accuracy)
-ax = sns.regplot(y, predictions, fit_reg=True, robust=True)
+plt.show()
