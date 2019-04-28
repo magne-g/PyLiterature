@@ -3,6 +3,8 @@ import warnings
 from datetime import date
 
 import numpy as np
+import sklearn.utils as utils
+import sklearn.utils.testing as test
 import pandas as pd
 import seaborn as sns
 from IPython.core.interactiveshell import InteractiveShell
@@ -23,6 +25,7 @@ from sklearn.neighbors import KNeighborsRegressor, RadiusNeighborsRegressor
 from sklearn.neural_network import MLPRegressor, BernoulliRBM
 from sklearn.svm import LinearSVR, NuSVR, SVR
 from sklearn.tree import DecisionTreeRegressor
+
 
 InteractiveShell.ast_node_interactivity = "all"
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -55,11 +58,11 @@ lasso = Lasso(alpha=alpha)
 power_transform_price = preprocessing.PowerTransformer('box-cox')
 scale_price = preprocessing.StandardScaler()
 
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.max_columns', 500)
+pd.set_option('display.max_rows', 10)
+pd.set_option('display.max_columns', 10)
 pd.set_option('display.width', 500)
 pd.set_option('display.max_colwidth', -1)
-pd.set_option('display.max_info_columns', 500)
+pd.set_option('display.max_info_columns', 10)
 pd.set_option('use_inf_as_na', True)
 
 dot_data = StringIO()
@@ -120,7 +123,11 @@ def save_accuracy_log(scores, estimator):
     data.to_csv('../logs/' + str(filename))
 
 
+
+
+
 def preprocess(data):
+
     if not _exclude_param_tuning:
         data = data.drop(columns=['first_reg'])
     if _print_unprocessed_dataset_stats:
@@ -128,13 +135,14 @@ def preprocess(data):
         print_dataset_stats(data)
     if not _exclude_param_tuning:
         data['price'] = data['price'].astype(np.float)
+        data.set_index('finn_code')
 
         data['km'] = data['km'].astype(np.float)
         data['km'] = np.round(data['km'], -3)
         data['km'] = np.divide(data['km'], 1000)
         data['price'] = np.round(data['price'], -3)
         data['price'] = np.divide(data['price'], 1000)
-        data = data[data.model_year > 1985]
+        data = data[data.model_year > 1980]
 
         data = data[(((data.model_year >= 2017) & (data.price > 15)) | (data.model_year < 2017))]
         data.loc[data.cylinder > 10, 'cylinder'] = np.round(data.cylinder / 1000)
@@ -160,15 +168,14 @@ def preprocess(data):
 
     min_max = preprocessing.StandardScaler()
 
-    data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', 'cylinder']])
+    #data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', #'cylinder']])
 
-    # power_transform_price = preprocessing.MinMaxScaler(
-    #    [np.log(data.price.min()),
-    #     np.log(data.price.max())])
+    data[['km', 'power', 'cylinder',  'model_age']] = min_max.fit_transform(data[['km', 'power', 'cylinder', 'model_age']])
+
+
 
     # power_transform_price = preprocessing.power_transform('yeo-johnson')
 
-    scale_price.fit_transform(data['price'].values.reshape(-1, 1))
 
     # power_transform_age = preprocessing.PowerTransformer('yeo-johnson')
     # plot_dist(data['model_age'], title='Distribution Before - model_age')
@@ -204,20 +211,21 @@ def preprocess(data):
     #print(data.info(verbose=True))
 
     # data = data.sort_values(by=['km'], axis=0)
-    label_encode(data)
+
+
 
     if (_use_one_hot_encoding and not _exclude_param_tuning):
         one_hot_cols = ['trans', 'fuel_type', 'gear', 'manufacturer', 'model']  # Nominals with low cardinality
         data = pd.get_dummies(data, columns=one_hot_cols)
 
-    # data = data.drop(columns=['model'])
+    #data = data.drop(columns=['model'])
     data = data.drop(columns=['model_year'])
-    # data = data.drop(columns=['manufacturer'])
-    # data = data.drop(columns=['fuel_type'])
-    # data = data.drop(columns=['gear'])
-    # data = data.drop(columns=['trans'])
+   # data = data.drop(columns=['manufacturer'])
+    #data = data.drop(columns=['fuel_type'])
+    #data = data.drop(columns=['gear'])
+    #data = data.drop(columns=['trans'])
     data = data.drop(columns=['finn_code'])
-    data = data.drop(columns=['cylinder'])
+    #data = data.drop(columns=['cylinder'])
 
     if _print_processed_dataset_stats:
         print('Processed Dataset Statistics:')
@@ -469,9 +477,31 @@ filename = path
 
 data, data_orig = load_dataset(filename)
 
+
+environment_string = 'Categorical: One-Hot Encoded\n' \
+                     'Label: Divided/Rounded\n' \
+                     'Continious:Box Cox Transformation' \
+                     '\nCardinal:None'
+
+print(environment_string)
+
 #show_boxplot()
 #return V_DATA, V_LABEL, T_DATA, T_LABEL, TR_DATA, TR_LABEL
 V_DATA, V_LABEL, T_DATA, T_LABEL, TR_DATA, TR_LABEL = process_and_label(data, dependant_variable=data['price'])
+
+
+
+test.assert_not_in('price', V_DATA.columns), "LABEL DETECTED in Validation DATA!"
+test.assert_not_in('price', T_DATA.columns), "LABEL DETECTED in Test DATA!"
+test.assert_not_in('price', TR_DATA.columns), "LABEL DETECTED in Training DATA!"
+
+
+
+df = pd.DataFrame({'n_rows': [len(V_DATA.values), len(T_DATA.values) , len(TR_DATA.values)],},
+                 index=['Validation (20%)' , 'Test (20%)', 'Training (60%)'])
+plot = df.plot.pie(y='n_rows', figsize=(6, 6), )
+
+plt.show()
 
 
 #d = {'X': X, 'x': x, 'Y': Y, 'y': y}
@@ -877,13 +907,8 @@ clf.best_params_
 
 def initial_estimator_comparison():
     regressor_list = []
-
-
-    #Dummy Regressor
-    regressor_list.append(DummyRegressor())
-
     #Decision Trees
-    regressor_list.append(DecisionTreeRegressor())
+    regressor_list.append(DecisionTreeRegressor(random_state=rng))
 
     #Neighbours
     regressor_list.append(KNeighborsRegressor())
@@ -895,26 +920,15 @@ def initial_estimator_comparison():
     regressor_list.append(KernelRidge())
 
     #Ensemble
-    regressor_list.append(AdaBoostRegressor())
-    regressor_list.append(BaggingRegressor())
+    regressor_list.append(BaggingRegressor(random_state=rng))
     regressor_list.append(RandomForestRegressor(random_state=rng))
     regressor_list.append(GradientBoostingRegressor(random_state=rng))
-    regressor_list.append(ExtraTreesRegressor())
-
-    #Support Vector Machines
-    regressor_list.append(LinearSVR())
-    regressor_list.append(NuSVR())
-    regressor_list.append(SVR())
-
+    regressor_list.append(ExtraTreesRegressor(random_state=rng))
 
     #Linear Models
     regressor_list.append(BayesianRidge())
-    regressor_list.append(Lasso())
-    regressor_list.append(LogisticRegression())
-    regressor_list.append(SGDRegressor())
+    regressor_list.append(Lasso(random_state=rng))
 
-    #Naive Bayes
-    regressor_list.append(GaussianNB())
 
     print(regressor_list)
     def comparee_estimator_results_cv():
@@ -923,22 +937,139 @@ def initial_estimator_comparison():
 
         for regressor in regressor_list:
             print("Fitting Estimator: %s" % regressor.__class__.__name__)
+            print(regressor)
             regressor.fit(TR_DATA, TR_LABEL)
 
             scores = cross_val_score(regressor, V_DATA, V_LABEL,
-                                     cv=KFold(n_splits=3, random_state=rng),
+                                     cv=KFold(n_splits=10, random_state=rng),
                                      n_jobs=8, scoring='r2')
             print(scores)
             score_list.append(scores)
             estimator_list.append(regressor.__class__.__name__)
             accuracy = "EV: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
             print(accuracy)
-        #aggregate_score = np.mean(score_list)
-        sns.boxplot(y=estimator_list, x=score_list, order=estimator_list, width=0.8)
-        plt.xlabel('Scoring Metric: R2')
+        aggregate_score = np.mean(score_list)
+        fig = sns.boxplot(y=estimator_list, x=score_list, order=estimator_list, width=0.8)
+        plt.xlabel('Random state: 42 | Scoring Metric: R2 | Aggregated avg: %0.4f' % np.median(score_list))
+        plt.axvline(x=0.8, label='threshold',c='r')
+
+        plt.legend()
         plt.show()
 
-# Aggregated avg: %0.4f' % np.median(score_list))
+#
+def optimize_estimators():
+
+    regressor_list = []
+    #Decision Trees
+    regressor_list.append(DecisionTreeRegressor(random_state=rng))
+
+    #Neighbours
+    regressor_list.append(KNeighborsRegressor())
+
+    #Neural Network
+    regressor_list.append(MLPRegressor(random_state=rng))
+
+    #Kernel Ridge
+    regressor_list.append(KernelRidge())
+
+    #Ensemble
+    regressor_list.append(BaggingRegressor(random_state=rng))
+    regressor_list.append(RandomForestRegressor(random_state=rng))
+    regressor_list.append(GradientBoostingRegressor(random_state=rng))
+    regressor_list.append(ExtraTreesRegressor(random_state=rng))
+
+    #Linear Models
+    regressor_list.append(BayesianRidge())
+    regressor_list.append(Lasso(random_state=rng))
+
+
+    print(regressor_list)
+    def comparee_estimator_results_cv():
+        score_list = []
+        estimator_list = []
+
+        for regressor in regressor_list:
+            print("Fitting Estimator: %s" % regressor.__class__.__name__)
+            print(regressor)
+            regressor.fit(TR_DATA, TR_LABEL)
+
+            scores = cross_val_score(regressor, V_DATA, V_LABEL,
+                                     cv=KFold(n_splits=10, random_state=rng),
+                                     n_jobs=8, scoring='r2')
+            print(scores)
+            score_list.append(np.round(np.mean(scores),3))
+            estimator_list.append(regressor.__class__.__name__ + ' ' + str(np.round(np.mean(scores),3)))
+            accuracy = "EV: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
+            print(accuracy)
+        aggregate_score = np.mean(score_list)
+        sns.set(style="whitegrid")
+        sns.barplot(y=estimator_list, x=score_list)
+        plt.xlabel('Aggregated median R2: %0.4f' % np.median(score_list))
+        plt.axvline(x=0.8, label='threshold',c='r')
+
+        plt.legend()
+        plt.show()
+
     comparee_estimator_results_cv()
 
-initial_estimator_comparison()
+def absolute_error():
+
+    regressor_list = []
+    #Decision Trees
+    regressor_list.append(DecisionTreeRegressor(random_state=rng))
+
+    #Neighbours
+    regressor_list.append(KNeighborsRegressor())
+
+    #Neural Network
+    regressor_list.append(MLPRegressor(random_state=rng))
+
+    #Kernel Ridge
+    regressor_list.append(KernelRidge())
+
+    #Ensemble
+    regressor_list.append(BaggingRegressor(random_state=rng))
+    regressor_list.append(RandomForestRegressor(random_state=rng))
+    regressor_list.append(GradientBoostingRegressor(random_state=rng))
+    regressor_list.append(ExtraTreesRegressor(random_state=rng))
+
+    #Linear Models
+    regressor_list.append(BayesianRidge())
+    regressor_list.append(Lasso(random_state=rng))
+
+
+    print(regressor_list)
+    def comparee_estimator_results_cv():
+        score_list = []
+        estimator_list = []
+
+        for regressor in regressor_list:
+            print("Fitting Estimator: %s" % regressor.__class__.__name__)
+            print(regressor)
+            regressor.fit(TR_DATA, TR_LABEL)
+
+            scores = cross_val_score(regressor, V_DATA, V_LABEL,
+                                     cv=KFold(n_splits=10, random_state=rng),
+                                     n_jobs=8, scoring='neg_median_absolute_error')
+            print(scores)
+            score_list.append(np.round(np.median(scores),3))
+            estimator_list.append(regressor.__class__.__name__ + ' ' + str(np.round(np.median(scores),3)))
+            accuracy = "EV: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
+            print(accuracy)
+            predictions=regressor.predict(T_DATA)
+        aggregate_score = np.median(score_list)
+        sns.set(style="whitegrid")
+        sns.barplot(y=estimator_list, x=score_list)
+        plt.xlabel('Aggreg. Absolute Median Error: %0.4f' % np.median(score_list))
+        plt.axvline(x=0.8, label='threshold',c='r')
+
+        plt.legend()
+        plt.show()
+
+    comparee_estimator_results_cv()
+absolute_error()
+print('************************LAST REPORT***********************************')
+
+print('************************LAST REPORT***********************************')
+
+#initial_estimator_comparison()
