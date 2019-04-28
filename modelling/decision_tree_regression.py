@@ -6,26 +6,18 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from IPython.core.interactiveshell import InteractiveShell
-import sklearn as sklearn
+from keras.layers.core import Dropout
 from matplotlib import pyplot as plt
 from sklearn import preprocessing
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor, AdaBoostRegressor
 from sklearn.externals.six import StringIO
-from sklearn.isotonic import IsotonicRegression
-from sklearn.linear_model import Lasso, BayesianRidge, LogisticRegression, ElasticNet, Lars, LassoLars, \
-    OrthogonalMatchingPursuit, ARDRegression
+from sklearn.linear_model import Lasso, BayesianRidge, ElasticNet, OrthogonalMatchingPursuit, HuberRegressor, \
+    TheilSenRegressor, SGDRegressor
 from sklearn.model_selection import cross_val_score, GridSearchCV, KFold, learning_curve, train_test_split, \
     validation_curve
-from sklearn.dummy import DummyRegressor
-import statsmodels
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.tree import DecisionTreeRegressor
-from keras.models import Sequential
-from sklearn import svm
-from keras.layers.core import Dense, Activation, ActivityRegularization, Dropout
-from keras.utils import np_utils
-
 
 InteractiveShell.ast_node_interactivity = "all"
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -44,18 +36,19 @@ _keras = True
 _verbose = 1
 regressor = None
 _alg = 'random_forest'
-#_alg = 'grad_boost_tree'
-#_alg = 'support_vector'
-#_alg = 'bayes'
+# _alg = 'grad_boost_tree'
+# _alg = 'support_vector'
+# _alg = 'bayes'
 # _alg = 'trees'
 # _alg = 'neural'
-#_alg = 'k_neighbor'
+# _alg = 'k_neighbor'
 
 _important_data = '{}'
 alpha = 1.0
 lasso = Lasso(alpha=alpha)
 
 power_transform_price = preprocessing.PowerTransformer('box-cox')
+scale_price = preprocessing.StandardScaler()
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -88,6 +81,7 @@ def print_dataset_stats(data):
     print(data.describe())
     print(data.count())
     print(data.corr())
+
 
 def mean_absolute_percentage_error(y_true, y_pred):
     y_true, y_pred = np.array(y_true), np.array(y_pred)
@@ -130,12 +124,11 @@ def preprocess(data):
     if not _exclude_param_tuning:
         data['price'] = data['price'].astype(np.float)
 
-
         data['km'] = data['km'].astype(np.float)
         data['km'] = np.round(data['km'], -3)
-        data['km'] = np.divide(data['km'], 5000)
+        data['km'] = np.divide(data['km'], 1000)
         data['price'] = np.round(data['price'], -3)
-        data['price'] = np.divide(data['price'], 500000)
+        data['price'] = np.divide(data['price'], 1000)
         data = data[data.model_year > 1985]
 
         data = data[(((data.model_year >= 2017) & (data.price > 15)) | (data.model_year < 2017))]
@@ -144,12 +137,10 @@ def preprocess(data):
         data = data[data.km < 350]
         data = data[data.power > 0]
         data = data[data.power < 500]
-        #if(not _exclude_price_trans):
-            #power_transform_price.fit(data.loc[:, 'price'].values.reshape(-1, 1))
-            #power_transform_price._scaler.with_std = True
-
-
-            #data['price'] = power_transform_price.transform(data.loc[:, 'price'].values.reshape(-1, 1))
+        # if(not _exclude_price_trans):
+        # power_transform_price.fit(data.loc[:, 'price'].values.reshape(-1, 1))
+        # power_transform_price._scaler.with_std = True
+        # data['price'] = power_transform_price.transform(data.loc[:, 'price'].values.reshape(-1, 1))
         data['model_age'] = (date.today().year - data['model_year'])
         indices = data[(data['fuel_type'] == 'Diesel') & (data['cylinder'] == 0)].index
         data.drop(indices, inplace=True)
@@ -172,9 +163,7 @@ def preprocess(data):
 
     # power_transform_price = preprocessing.power_transform('yeo-johnson')
 
-    # power_transform = preprocessing.MinMaxScaler(
-    #    [np.log(data.price.min()),
-    #     np.log(data.price.max())])
+    scale_price.fit_transform(data['price'].values.reshape(-1, 1))
 
     # power_transform_age = preprocessing.PowerTransformer('yeo-johnson')
     # plot_dist(data['model_age'], title='Distribution Before - model_age')
@@ -216,12 +205,12 @@ def preprocess(data):
         one_hot_cols = ['trans', 'fuel_type', 'gear', 'manufacturer', 'model']  # Nominals with low cardinality
         data = pd.get_dummies(data, columns=one_hot_cols)
 
-    #data = data.drop(columns=['model'])
+    # data = data.drop(columns=['model'])
     data = data.drop(columns=['model_year'])
-    #data = data.drop(columns=['manufacturer'])
-    #data = data.drop(columns=['fuel_type'])
-    #data = data.drop(columns=['gear'])
-    #data = data.drop(columns=['trans'])
+    # data = data.drop(columns=['manufacturer'])
+    # data = data.drop(columns=['fuel_type'])
+    # data = data.drop(columns=['gear'])
+    # data = data.drop(columns=['trans'])
     data = data.drop(columns=['finn_code'])
     data = data.drop(columns=['cylinder'])
 
@@ -256,6 +245,7 @@ def process_and_label(data, dependant_variable):
     if (_verbose > 0):
         print('{0:.0f}% of data rows dropped in processing...'.format(100 - (post_count / pre_count * 100)))
     return data, label
+
 
 def plot_price_regression(p, s, title):
     ax = sns.regplot(s, p, fit_reg=True)
@@ -337,6 +327,7 @@ def plot_learning_curve(estimator, title, X, y, ylim=(0.85, 1), cv=None,
 
     plt.legend(loc="best")
     return plt
+
 
 def get_estimator_name(estimator):
     return estimator.__class__.__name__
@@ -437,7 +428,6 @@ data, data_orig = load_dataset(filename)
 
 show_boxplot()
 
-
 data, label = process_and_label(data, dependant_variable=data['price'])
 
 print(data.info(verbose=True))
@@ -448,10 +438,9 @@ if (len(data) != len(label)):
 
 X, x, Y, y = split_data(data, label)
 
-
 d = {'X': X, 'x': x, 'Y': Y, 'y': y}
 
-#estimator = define_estimator(d, RandomForestRegressor(random_state=r_state, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
+# estimator = define_estimator(d, RandomForestRegressor(random_state=r_state, n_jobs=8), AdaBoostRegressor(n_estimators=5),_tune_hyper_parameters=True)
 
 if _alg in '_keras':
 
@@ -492,14 +481,13 @@ if _alg in '_keras':
 
     # estimator = rcv.best_estimator_
 
-
     plot_learning_curve(estimator, 'Learning Curves - GradientBoostingRegressor', X, Y, (.75, 1.01),
                         cv=KFold(n_splits=10, random_state=rng), n_jobs=8)
 
     plt.show()
 
     model = fit_model(X, Y, estimator=estimator)
-    #dummy_model = fit_model(X, Y, dummy_estimator)
+    # dummy_model = fit_model(X, Y, dummy_estimator)
 
     scores_r2 = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8, scoring='r2')
     scores_variance = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8,
@@ -507,35 +495,32 @@ if _alg in '_keras':
     scores_mse = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8,
                                  scoring='neg_mean_squared_error')
 
-    #dummy_scores_r2 = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
+    # dummy_scores_r2 = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
     #                                  scoring='r2')
-    #dummy_scores_variance = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state),
+    # dummy_scores_variance = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state),
     #                                        n_jobs=8, scoring='explained_variance')
-    #dummy_scores_mse = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
+    # dummy_scores_mse = cross_val_score(dummy_model, d['x'], d['y'], cv=KFold(n_splits=20, random_state=r_state), n_jobs=8,
     #                                   scoring='neg_mean_squared_error')
     scores_abs = cross_val_score(model, d['x'], d['y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8,
                                  scoring='neg_median_absolute_error')
-    #dummy_scores_mse = np.array(dummy_scores_mse)
-    #dummy_scores_r2 = np.array(dummy_scores_r2)
-    #dummy_scores_variance = np.array(dummy_scores_variance)
+    # dummy_scores_mse = np.array(dummy_scores_mse)
+    # dummy_scores_r2 = np.array(dummy_scores_r2)
+    # dummy_scores_variance = np.array(dummy_scores_variance)
 
-    #dummies = pd.DataFrame()
+    # dummies = pd.DataFrame()
 
-    #dummies['mse'] = dummy_scores_mse
-    #dummies['r2'] = dummy_scores_r2
-    #dummies['var'] = dummy_scores_variance
+    # dummies['mse'] = dummy_scores_mse
+    # dummies['r2'] = dummy_scores_r2
+    # dummies['var'] = dummy_scores_variance
 
-    #sns.lineplot(data=dummies)
+    # sns.lineplot(data=dummies)
 
-    #plt.show()
+    # plt.show()
 
     # sns.lineplot([dummy_scores_mse, dummy_scores_r2, dummy_scores_variance], [np.linspace(0.0, 1.0, 100)])
     # plt.show()
 
-
     predictions = model.predict(d['x'])
-
-
 
     scores_training_data = cross_val_score(model, d['X'], d['Y'], cv=KFold(n_splits=10, random_state=rng), n_jobs=8,
                                            scoring='r2')
@@ -556,7 +541,7 @@ if _alg in '_keras':
     name = get_estimator_name(model)
 
     _accuracy = "%s | R2: %0.4f (+/- %0.3f)" % (name, scores_r2.mean(), scores_r2.std() * 2)
-    #_accuracy_dummy = "%s | R2: %0.4f (+/- %0.3f)" % (dummy_name, dummy_scores_r2.mean(), dummy_scores_r2.std() * 2)
+    # _accuracy_dummy = "%s | R2: %0.4f (+/- %0.3f)" % (dummy_name, dummy_scores_r2.mean(), dummy_scores_r2.std() * 2)
 
     _accuracy_variance = "Explained Variance: %0.4f (+/- %0.3f)" % (scores_variance.mean(), scores_variance.std() * 2)
     _accuracy_mse = "MSE: %0.4f (+/- %0.3f)" % (scores_mse.mean(), scores_mse.std() * 2)
@@ -566,31 +551,27 @@ if _alg in '_keras':
     _accuracy_training = "Training Accuracy: %0.4f (+/- %0.3f)" % (
         scores_training_data.mean(), scores_training_data.std() * 2)
 
-
-
-    if  _exclude_price_tuning and _exclude_price_trans:
+    if _exclude_price_tuning and _exclude_price_trans:
         _mean_abs = scores_abs.mean()
         _std_abs = scores_abs.std()
-    elif  not _exclude_price_tuning and _exclude_price_trans:
+    elif not _exclude_price_tuning and _exclude_price_trans:
         _mean_abs = np.multiply(np.array(scores_abs.mean()), 1000.0)
         _std_abs = np.multiply(np.array(scores_abs.std()), 1000.0)
     elif not _exclude_price_trans:
         _mean_abs = np.multiply(np.array(power_transform_price._scaler.mean_), 1000.0)
         _std_abs = np.multiply(np.array(power_transform_price._scaler.scale_), 1000.0)
 
-
-
-    _mean_abs_percent_error = "\n MAE: %0.0f NOK (+/- %0f)\n R2: %0.3f (+/- %0.2f)" % (_mean_abs, _std_abs, scores_r2.mean(), scores_r2.std())
-
+    _mean_abs_percent_error = "\n MAE: %0.0f NOK (+/- %0f)\n R2: %0.3f (+/- %0.2f)" % (
+        _mean_abs, _std_abs, scores_r2.mean(), scores_r2.std())
 
     plot_price_regression(predicted_prices, seen_prices, _accuracy)
 
-    #dummy_predict = dummy_estimator.predict(x)
+    # dummy_predict = dummy_estimator.predict(x)
 
-    #dummy_predict = power_transform_price.inverse_transform(np.array(dummy_predict).reshape(-1, 1))
-    #dummy_predict = np.array(dummy_predict).flatten()
+    # dummy_predict = power_transform_price.inverse_transform(np.array(dummy_predict).reshape(-1, 1))
+    # dummy_predict = np.array(dummy_predict).flatten()
 
-    #plot_price_regression(dummy_predict, seen_prices, _accuracy_dummy)
+    # plot_price_regression(dummy_predict, seen_prices, _accuracy_dummy)
 
     print(_accuracy)
     print(_accuracy_mse)
@@ -601,9 +582,10 @@ if _alg in '_keras':
 
     save_accuracy_log(scores_r2, estimator)
 
+
     def describe_split():
         # Data to plot
-        labels =   ['Training Set, n=' + str(len(X)),'Testing Set, n=' + str(len(x))]
+        labels = ['Training Set, n=' + str(len(X)), 'Testing Set, n=' + str(len(x))]
         sizes = [len(X), len(x)]
         colors = ['lightgreen', 'lightskyblue']
 
@@ -619,13 +601,9 @@ if _alg in '_keras':
     describe_split()
     plt.show()
 
-
-
-
     plot_dist(x=data_orig['price'], title='Original Price Distribution' + str(_mean_abs_percent_error))
 
     plot_dist(x=Y, title='New Price Distribution' + str(_mean_abs_percent_error))
-
 
     feat_importances = pd.Series(model.feature_importances_, index=data.columns)
     feat_importances.nlargest(6).plot(kind='barh')
@@ -650,28 +628,20 @@ if _alg in '_keras':
 
     d['x']['p'] = predicted_prices
 
-
     print(d['x'])
 
     # run(path, X_train, Y_train, X_test, Y_test)
 elif _alg in 'neural':
 
-    import numpy
-    import pandas
     from keras.models import Sequential
-    from keras.layers import Dense, BatchNormalization
-    from keras.layers import Activation as a
+    from keras.layers import Dense
     import keras as ks
     from keras import backend as K
-    from keras.wrappers.scikit_learn import KerasRegressor
     from sklearn.model_selection import cross_val_score
     from sklearn.model_selection import KFold
     from keras import callbacks
-    from keras import losses
     import talos as ta
-    from statsmodels import robust
     from sklearn.preprocessing import StandardScaler
-    from sklearn.pipeline import Pipeline
     # define base model
     from numpy.random import seed
     import tensorflow as tf
@@ -692,9 +662,9 @@ elif _alg in 'neural':
             if epoch % self.n == 0:
                 curr_loss = logs.get('val_loss')
 
-
                 print("epoch = %4d  loss = %0.5f" \
                       % (epoch, curr_loss))
+
 
     def optimize():
 
@@ -712,10 +682,10 @@ elif _alg in 'neural':
             print(x_train.head())
             model = Sequential()
 
-            model.add(Dense(x_train.shape[1], input_dim=x_train.shape[1],activation=params['activation']))
+            model.add(Dense(x_train.shape[1], input_dim=x_train.shape[1], activation=params['activation']))
             model.add(Dropout(0.33))
             model.add(Dense(8, activation=params['activation']))
-            #model.add(Dropout(0.33))
+            # model.add(Dropout(0.33))
             model.add(Dense(1, activation='relu'))
             model.compile(optimizer=params['optimizer'], loss=params['losses'], metrics=['mean_absolute_error'])
 
@@ -749,51 +719,38 @@ elif _alg in 'neural':
             plt.legend(['Train', 'Test'], loc='upper left')
             plt.show()
 
-
-
             return out, model
 
         scan_object = ta.Scan(x=X, y=Y.values, x_val=x, y_val=y.values, model=price_model, params=p, print_params=True)
 
-
-
         return scan_object
+
 
     e = ta.Evaluate(optimize())
 
-
-
-    #e.evaluate(X, Y.values, mode='regression', print_out=True, metric='mean_absolute_error', asc=True)
-
-
-
-
+    # e.evaluate(X, Y.values, mode='regression', print_out=True, metric='mean_absolute_error', asc=True)
 
     # fix random seed for reproducibility
 
     # evaluate model with standardized dataset
-    #print(Y.head())
-    #print(y.head())
-    #y_predict = model.predict(x)
+    # print(Y.head())
+    # print(y.head())
+    # y_predict = model.predict(x)
 
-    #p_data = pd.DataFrame(data=y_predict, columns=['price'])
-    #abs = np.multiply(power_transform_price.inverse_transform(p_data), 1000.0)
+    # p_data = pd.DataFrame(data=y_predict, columns=['price'])
+    # abs = np.multiply(power_transform_price.inverse_transform(p_data), 1000.0)
 
-    #y_rev = np.multiply(power_transform_price.inverse_transform(np.array(d['y']).reshape(-1, 1)), 1000.0)
+    # y_rev = np.multiply(power_transform_price.inverse_transform(np.array(d['y']).reshape(-1, 1)), 1000.0)
 
-    #print(np.mean(y_rev - abs))
+    # print(np.mean(y_rev - abs))
 
+# kfold = KFold(n_splits=2, random_state=seed)
+# results = cross_val_score(estimator, x, y, cv=kfold, scoring='neg_mean_absolute_error')
 
-   #kfold = KFold(n_splits=2, random_state=seed)
-   # results = cross_val_score(estimator, x, y, cv=kfold, scoring='neg_mean_absolute_error')
+# print(results.mean())
+# mean = results.mean()
 
-    #print(results.mean())
-    #mean = results.mean()
-
-    #print("Results: min: %.2f max: %.2f MAE" % (_mean_abs.min(), _mean_abs.max()))
-
-
-
+# print("Results: min: %.2f max: %.2f MAE" % (_mean_abs.min(), _mean_abs.max()))
 
 
 # SVR
@@ -806,17 +763,17 @@ clf.fit(X, Y)
 clf.best_params_
 """
 
+
 # parameters = {'kernel':('linear', 'rbf'), 'C':[0.01, 0.1, 1, 10], 'gamma':[1e-7, 1e-4, 0.001, 0.1], 'epsilon':[0.3,0.4]}
 
-#parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
+# parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
 
 #             {'kernel': ['linear'], 'C': [0.01, 0.1, 1, 10], 'epsilon': [0.1, 0.3, 0.4]}]
 
-#parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
+# parameters = [{'kernel': ['rbf'], 'C': [0.01, 0.1, 1, 10], 'gamma': [0.001, 0.01, 0.1]},
 #                 {'kernel': ['poly'], 'C': [0.01, 0.1, 1, 10, 100], 'epsilon': [0.001, 0.01, 0.1],
 #                 'degree': [3], 'coef0': [1]}]
 
-svr = svm.SVR()
 # clf = GridSearchCV(svr, parameters, verbose=2, n_jobs=-1)
 # clf.fit(X, Y)
 # print(_alg)
@@ -824,44 +781,38 @@ svr = svm.SVR()
 # best_params = clf.best_params_
 
 # use best_params_
-#if best_params['kernel'] == 'rbf':
+# if best_params['kernel'] == 'rbf':
 #    regressor = svm.SVR(kernel=best_params['kernel'], C=best_params['C'], gamma=best_params['gamma'])
-#else:
+# else:
 #    regressor = svm.SVR(kernel=best_params['kernel'], C=best_params['C'], epsilon=best_params['epsilon'])
-#regressor = svm.SVR(kernel='poly', C=100, gamma='auto', degree=3, epsilon=.1, coef0=1)
-#regressor.fit(X, Y)
+# regressor = svm.SVR(kernel='poly', C=100, gamma='auto', degree=3, epsilon=.1, coef0=1)
+# regressor.fit(X, Y)
 
 # regressor = svm.SVR(kernel='rbf', C=10, epsilon=0.3, gamma=0.1)
 # regressor.fit(X, Y)
 
 # better
-regressor = svm.SVR(kernel='rbf', C=100, epsilon=0.3, gamma=0.01)
-regressor.fit(X, Y)
 
 # regressor = svm.SVR(kernel='linear', C=1.5, epsilon=0.3, gamma=1e-07)
 # regressor.fit(X, Y)
 
 
-
 # BayesianRidge
 
-#parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
- #                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
- #                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}
+# parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+#                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
+#                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}
 
-#bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
-#bayes.fit(X, Y)
-#print(_alg)
-#print(bayes.best_params_)
-#best_params = bayes.best_params_
+# bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
+# bayes.fit(X, Y)
+# print(_alg)
+# print(bayes.best_params_)
+# best_params = bayes.best_params_
 
 # use best_params_
-#regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
-                         # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
-#regressor.fit(X, Y)
-
-regressor = GradientBoostingRegressor()
-regressor.fit(X, Y)
+# regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
+# lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
+# regressor.fit(X, Y)
 
 
 # BayesianRidge
@@ -880,100 +831,76 @@ regressor.fit(X, Y)
 # lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
 # regressor.fit(X, Y)
 
-plt.show()
 
-regressor_list = []
+def comparee_estimator_results_cv():
 
+    regressor_list = []
+    regressor_list.append(BayesianRidge())
+    regressor_list.append(DecisionTreeRegressor())
+    regressor_list.append(RandomForestRegressor(random_state=rng))
+    regressor_list.append(KNeighborsRegressor())
+    regressor_list.append(GradientBoostingRegressor(random_state=rng))
+    regressor_list.append(MLPRegressor(random_state=rng))
+    print("Comparing %d regressors" % len(regressor_list))
 
+    score_list = []
+    estimator_list = []
 
-regressor_list.append(ElasticNet(random_state=rng))
-regressor_list.append(Lasso(random_state=rng))
-regressor_list.append(OrthogonalMatchingPursuit())
-regressor_list.append(BayesianRidge())
-regressor_list.append(RandomForestRegressor(random_state=rng))
-regressor_list.append(DecisionTreeRegressor(random_state=rng))
-regressor_list.append(KNeighborsRegressor())
-regressor_list.append(GradientBoostingRegressor(random_state=rng))
-regressor_list.append(MLPRegressor(random_state=rng))
-regressor_list.append(AdaBoostRegressor(random_state=rng))
+    for regressor in regressor_list:
+        print("Fitting Regressor: %s" % regressor.__class__.__name__)
+        regressor.fit(X, Y)
 
-
-# BayesianRidge
-
-# parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-#                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-#                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
-# bayes.fit(X, Y)
-# print(_alg)
-# print(bayes.best_params_)
-# best_params = bayes.best_params_
-
-# use best_params_
-# regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
-# lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
-# regressor.fit(X, Y)
-
-
-
-# BayesianRidge
-
-# parameters_bayes = {'alpha_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'alpha_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-#                   'lambda_1': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04],
-#                   'lambda_2': [1e-08, 1e-07, 1e-06, 1e-05, 1e-04], 'compute_score': [True]}    # bayes = GridSearchCV(br, parameters_bayes, verbose=2, n_jobs=-1)
-# bayes.fit(X, Y)
-# print(_alg)
-# print(bayes.best_params_)
-# best_params = bayes.best_params_
-
-# use best_params_
-# regressor = BayesianRidge(compute_score=True, alpha_1=best_params['alpha_1'], alpha_2=best_params['alpha_2'],
-# lambda_1=best_params['lambda_1'], lambda_2=best_params['lambda_2'])
-# regressor.fit(X, Y)
+        scores = cross_val_score(regressor, x, y,
+                                 cv=KFold(n_splits=15, random_state=rng),
+                                 n_jobs=-1, scoring='r2')
+        print(scores)
+        score_list.append(scores)
+        estimator_list.append(regressor.__class__.__name__)
+        accuracy = "R2: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
+        print(accuracy)
+    aggregate_score = np.mean(score_list)
+    sns.boxplot(y=estimator_list, x=score_list, order=estimator_list, saturation=0.25, width=0.75)
+    plt.xlim(xmax=0.05)
+    plt.xlabel('CV, Scoring: R2. Aggregated avg: %0.4f' % np.median(score_list))
+    plt.show()
 
 
 
 
-
-# KNeighborRegressor
-
-parameters = {'n_neighbors': [3, 4, 5, 6, 7, 8, 9], 'weights': ['uniform', 'distance'],
-              'leaf_size': [20, 30, 35, 40, 45, 50]}
-
-#  neigh = GridSearchCV(knr, parameters, verbose=2, n_jobs=-1)
-#  neigh.fit(X, Y)
-#  print(_alg)
-#  print(neigh.best_params_)
-#  best_params = neigh.best_params_
-
-# use best_params_
-#  regressor = KNeighborsRegressor(n_neighbors=best_params['n_neighbors'], weights=best_params['weights'],
-                               # leaf_size=best_params['leaf_size'], n_jobs=-1)
-# regressor.fit(X, Y)
+#comparee_estimator_results_cv()
 
 
+def compare_estimator_results_mae():
 
-score_list = []
-estimator_list = []
+    regressor_list = []
+    regressor_list.append(BayesianRidge())
+    regressor_list.append(DecisionTreeRegressor())
+    regressor_list.append(RandomForestRegressor(random_state=rng))
+    regressor_list.append(KNeighborsRegressor())
+    regressor_list.append(GradientBoostingRegressor(random_state=rng))
+    regressor_list.append(MLPRegressor(random_state=rng))
+    print("Comparing %d regressors" % len(regressor_list))
 
-for regressor in regressor_list:
-    print(regressor)
-    regressor.fit(X, Y)
+    score_list = []
+    estimator_list = []
 
-    predictions = regressor.predict(x)
-    # confidence = regressor.score(x,y)
-    # print(confidence)
+    for regressor in regressor_list:
+        print("Fitting Regressor: %s" % regressor.__class__.__name__)
+        regressor.fit(X, Y)
 
-    scores = cross_val_score(regressor, x, y,
-                             cv=KFold(n_splits=5, random_state=rng),
-                             n_jobs=-1, scoring='neg_median_absolute_error')
-    print(scores)
-    score_list.append(scores.mean())
-    estimator_list.append(regressor.__class__.__name__)
-    accuracy = "MAE: %0.4f (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
-    print(accuracy)
-    #ax = sns.regplot(y, predictions, fit_reg=True, robust=True)
+        scores = cross_val_score(regressor, x, y,
+                                 cv=KFold(n_splits=15, random_state=rng),
+                                 n_jobs=-1, scoring='neg_median_absolute_error')
+        print(scores)
+        score_list.append(scores)
+        estimator_list.append(regressor.__class__.__name__)
+        accuracy = "MAE: %0.4f (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
+        print(accuracy)
+    aggregate_score = np.mean(score_list)
+    sns.boxplot(y=estimator_list, x=score_list, order=estimator_list, saturation=0.25, width=0.75)
+   # plt.xlim(xmax=0.05)
+    plt.xlabel('CV, Scoring: MAE. Aggregated avg: %0.4f' % np.median(score_list))
+    plt.show()
 
 
-sns.stripplot(y=estimator_list, x=score_list)
-
-plt.show()
+compare_estimator_results_mae()
