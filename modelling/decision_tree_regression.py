@@ -10,6 +10,7 @@ import seaborn as sns
 from IPython.core.interactiveshell import InteractiveShell
 from keras.layers.core import Dropout
 from matplotlib import pyplot as plt
+from sklearn.decomposition import PCA
 from sklearn import metrics as metrics, preprocessing
 from sklearn.dummy import DummyRegressor
 from sklearn.ensemble import AdaBoostRegressor, BaggingRegressor, GradientBoostingRegressor, RandomForestRegressor, \
@@ -136,13 +137,15 @@ def preprocess(data):
     if not _exclude_param_tuning:
         data['price'] = data['price'].astype(np.float)
         data.set_index('finn_code')
+        data['order'] = np.arange(len(data))
 
         data['km'] = data['km'].astype(np.float)
+        data = data[data.price < 950000]
         data['km'] = np.round(data['km'], -3)
         data['km'] = np.divide(data['km'], 1000)
         data['price'] = np.round(data['price'], -3)
         data['price'] = np.divide(data['price'], 1000)
-        data = data[data.model_year > 1980]
+        data = data[data.model_year > 1985]
 
         data = data[(((data.model_year >= 2017) & (data.price > 15)) | (data.model_year < 2017))]
         data.loc[data.cylinder > 10, 'cylinder'] = np.round(data.cylinder / 1000)
@@ -160,17 +163,19 @@ def preprocess(data):
         indices = data[(data['fuel_type'] == 'Bensin') & (data['cylinder'] == 0)].index
         data.drop(indices, inplace=True)
 
-    # kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=15)
-    # kbins.fit(data.loc[:, 'km'].values.reshape(-1,1))
-    # data['km'] = kbins.transform(data.loc[:, 'km'].values.reshape(-1, 1))
+    kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=25)
+    kbins.fit(data.loc[:, 'km'].values.reshape(-1,1))
+    data['km'] = kbins.transform(data.loc[:, 'km'].values.reshape(-1, 1))
 
     # global power_transform_price
 
     min_max = preprocessing.StandardScaler()
+   # mileage_interval = preprocessing.KBinsDiscretizer(n_bins=8, encode='onehot')
+   # data[['km']] = mileage_interval.fit_transform(data[['km']])
+          #data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', #'cylinder']])
 
-    #data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', #'cylinder']])
+    data[['km', 'power', 'cylinder','order']] = min_max.fit_transform(data[['km', 'power', 'cylinder','order']])
 
-    data[['km', 'power', 'cylinder',  'model_age']] = min_max.fit_transform(data[['km', 'power', 'cylinder', 'model_age']])
 
 
 
@@ -214,19 +219,22 @@ def preprocess(data):
 
 
 
-    if (_use_one_hot_encoding and not _exclude_param_tuning):
-        one_hot_cols = ['trans', 'fuel_type', 'gear', 'manufacturer', 'model']  # Nominals with low cardinality
-        data = pd.get_dummies(data, columns=one_hot_cols)
+
+    one_hot_cols = ['trans', 'fuel_type', 'gear', 'manufacturer', 'model']  #
+    data = pd.get_dummies(data, columns=one_hot_cols)
 
     #data = data.drop(columns=['model'])
-    data = data.drop(columns=['model_year'])
-   # data = data.drop(columns=['manufacturer'])
+    #data = data.drop(columns=['model_year'])
+    #data = data.drop(columns=['manufacturer'])
     #data = data.drop(columns=['fuel_type'])
     #data = data.drop(columns=['gear'])
     #data = data.drop(columns=['trans'])
     data = data.drop(columns=['finn_code'])
     #data = data.drop(columns=['cylinder'])
 
+    pca = PCA(n_components=20)
+    print(pca.fit(data))
+    print(pca.explained_variance_)
     if _print_processed_dataset_stats:
         print('Processed Dataset Statistics:')
         #print_dataset_stats(data)
@@ -251,6 +259,9 @@ def process_and_label(data, dependant_variable):
     n = len(data.index)
     #Process all data first
     data = preprocess(data)
+
+    data = data.sample(frac=1).reset_index(drop=True)  # Shuffle Dataset
+
     n_post = len(data.index)
     label = data[dependant_variable.name]
     #Extract VALIDATION data from SOURCE data
@@ -282,7 +293,7 @@ def process_and_label(data, dependant_variable):
     n_tr = len(TR_DATA.index)
 
     debug_string = ('Total Rows: %d \nTotal Rows After Processing: %d\nValidation Data Rows: %d\nTest Data Rows: %d\nTraining Data Rows: %d') % (n, n_post, n_v, n_t, n_tr)
-
+    print(data.describe())
     print(debug_string)
 
     #Remove dependant variables from all datasets
@@ -295,7 +306,7 @@ def process_and_label(data, dependant_variable):
     #print(data)
     #data.to_csv('../labeled_cars.csv')
 
-    return V_DATA, V_LABEL, T_DATA, T_LABEL, TR_DATA, TR_LABEL
+    return V_DATA, V_LABEL, T_DATA, T_LABEL, TR_DATA, TR_LABEL, data
 
 
 def plot_price_regression(p, s, title):
@@ -487,8 +498,15 @@ print(environment_string)
 
 #show_boxplot()
 #return V_DATA, V_LABEL, T_DATA, T_LABEL, TR_DATA, TR_LABEL
-V_DATA, V_LABEL, T_DATA, T_LABEL, TR_DATA, TR_LABEL = process_and_label(data, dependant_variable=data['price'])
 
+
+
+
+V_DATA, V_LABEL, T_DATA, T_LABEL, TR_DATA, TR_LABEL, data = process_and_label(data, dependant_variable=data['price'])
+
+
+print(data.info())
+print(data.corr())
 
 
 test.assert_not_in('price', V_DATA.columns), "LABEL DETECTED in Validation DATA!"
@@ -904,40 +922,37 @@ clf.best_params_
 #metrics.median_absolute_error(y_true, y_pred) 	Median absolute error regression loss
 #metrics.r2_score(y_true, y_pred[, …]) 	R^2 (coefficient of determination) regression score function.
 
+regressor_list = []
+# Decision Trees
+regressor_list.append(DecisionTreeRegressor(random_state=rng))
+regressor_list.append(AdaBoostRegressor(DecisionTreeRegressor(random_state=rng)))
 
+
+# Neighbours
+regressor_list.append(KNeighborsRegressor())
+
+# Neural Network
+regressor_list.append(MLPRegressor(random_state=rng))
+
+# Kernel Ridge
+regressor_list.append(KernelRidge())
+
+# Ensemble
+regressor_list.append(BaggingRegressor(random_state=rng))
+regressor_list.append(RandomForestRegressor(random_state=rng))
+regressor_list.append(GradientBoostingRegressor(random_state=rng))
+regressor_list.append(ExtraTreesRegressor(random_state=rng))
+
+# Linear Models
+regressor_list.append(BayesianRidge())
+regressor_list.append(Lasso(random_state=rng))
 def initial_estimator_comparison():
-    regressor_list = []
-    #Decision Trees
-    regressor_list.append(DecisionTreeRegressor(random_state=rng))
-
-    #Neighbours
-    regressor_list.append(KNeighborsRegressor())
-
-    #Neural Network
-    regressor_list.append(MLPRegressor(random_state=rng))
-
-    #Kernel Ridge
-    regressor_list.append(KernelRidge())
-
-    #Ensemble
-    regressor_list.append(BaggingRegressor(random_state=rng))
-    regressor_list.append(RandomForestRegressor(random_state=rng))
-    regressor_list.append(GradientBoostingRegressor(random_state=rng))
-    regressor_list.append(ExtraTreesRegressor(random_state=rng))
-
-    #Linear Models
-    regressor_list.append(BayesianRidge())
-    regressor_list.append(Lasso(random_state=rng))
-
-
-    print(regressor_list)
     def comparee_estimator_results_cv():
         score_list = []
         estimator_list = []
 
         for regressor in regressor_list:
             print("Fitting Estimator: %s" % regressor.__class__.__name__)
-            print(regressor)
             regressor.fit(TR_DATA, TR_LABEL)
 
             scores = cross_val_score(regressor, V_DATA, V_LABEL,
@@ -946,43 +961,14 @@ def initial_estimator_comparison():
             print(scores)
             score_list.append(scores)
             estimator_list.append(regressor.__class__.__name__)
-            accuracy = "EV: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
-            print(accuracy)
         aggregate_score = np.mean(score_list)
         fig = sns.boxplot(y=estimator_list, x=score_list, order=estimator_list, width=0.8)
-        plt.xlabel('Random state: 42 | Scoring Metric: R2 | Aggregated avg: %0.4f' % np.median(score_list))
         plt.axvline(x=0.8, label='threshold',c='r')
-
         plt.legend()
         plt.show()
 
 #
 def optimize_estimators():
-
-    regressor_list = []
-    #Decision Trees
-    regressor_list.append(DecisionTreeRegressor(random_state=rng))
-
-    #Neighbours
-    regressor_list.append(KNeighborsRegressor())
-
-    #Neural Network
-    regressor_list.append(MLPRegressor(random_state=rng))
-
-    #Kernel Ridge
-    regressor_list.append(KernelRidge())
-
-    #Ensemble
-    regressor_list.append(BaggingRegressor(random_state=rng))
-    regressor_list.append(RandomForestRegressor(random_state=rng))
-    regressor_list.append(GradientBoostingRegressor(random_state=rng))
-    regressor_list.append(ExtraTreesRegressor(random_state=rng))
-
-    #Linear Models
-    regressor_list.append(BayesianRidge())
-    regressor_list.append(Lasso(random_state=rng))
-
-
     print(regressor_list)
     def comparee_estimator_results_cv():
         score_list = []
@@ -1013,56 +999,24 @@ def optimize_estimators():
     comparee_estimator_results_cv()
 
 def absolute_error():
-
-    regressor_list = []
-    #Decision Trees
-    regressor_list.append(DecisionTreeRegressor(random_state=rng))
-
-    #Neighbours
-    regressor_list.append(KNeighborsRegressor())
-
-    #Neural Network
-    regressor_list.append(MLPRegressor(random_state=rng))
-
-    #Kernel Ridge
-    regressor_list.append(KernelRidge())
-
-    #Ensemble
-    regressor_list.append(BaggingRegressor(random_state=rng))
-    regressor_list.append(RandomForestRegressor(random_state=rng))
-    regressor_list.append(GradientBoostingRegressor(random_state=rng))
-    regressor_list.append(ExtraTreesRegressor(random_state=rng))
-
-    #Linear Models
-    regressor_list.append(BayesianRidge())
-    regressor_list.append(Lasso(random_state=rng))
-
-
-    print(regressor_list)
     def comparee_estimator_results_cv():
         score_list = []
         estimator_list = []
 
         for regressor in regressor_list:
             print("Fitting Estimator: %s" % regressor.__class__.__name__)
-            print(regressor)
             regressor.fit(TR_DATA, TR_LABEL)
 
+
             scores = cross_val_score(regressor, V_DATA, V_LABEL,
-                                     cv=KFold(n_splits=10, random_state=rng),
+                                     cv=KFold(n_splits=3, random_state=rng),
                                      n_jobs=8, scoring='neg_median_absolute_error')
             print(scores)
-            score_list.append(np.round(np.median(scores),3))
-            estimator_list.append(regressor.__class__.__name__ + ' ' + str(np.round(np.median(scores),3)))
-            accuracy = "EV: %0.4f%% (+/- %0.3f)" % (scores.mean(), scores.std() * 2)
-            print(accuracy)
-            predictions=regressor.predict(T_DATA)
-        aggregate_score = np.median(score_list)
+            score_list.append(abs(np.round(np.mean(scores),1)))
+            estimator_list.append(regressor.__class__.__name__ + ' ' + str(abs(np.round(np.median(scores),1))))
         sns.set(style="whitegrid")
         sns.barplot(y=estimator_list, x=score_list)
-        plt.xlabel('Aggreg. Absolute Median Error: %0.4f' % np.median(score_list))
-        plt.axvline(x=0.8, label='threshold',c='r')
-
+        plt.xlabel('Avg. Absolute Median Error in 1000 NOK: %0.4f' % np.mean(score_list))
         plt.legend()
         plt.show()
 
