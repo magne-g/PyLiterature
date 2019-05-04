@@ -1,39 +1,35 @@
+import hashlib
 import os
 import warnings
 from datetime import date
-import hashlib
+
 import numpy as np
-import sklearn.utils as utils
-import sklearn.utils.testing as test
 import pandas as pd
 import seaborn as sns
+import sklearn.utils.testing as test
 from IPython.core.interactiveshell import InteractiveShell
-from keras.layers.core import Dropout
 from matplotlib import pyplot as plt
-from pandas.util import hash_pandas_object
-from sklearn.decomposition import PCA
 from sklearn import metrics as metrics, preprocessing
-from sklearn.dummy import DummyRegressor
 from sklearn.ensemble import AdaBoostRegressor, BaggingRegressor, GradientBoostingRegressor, RandomForestRegressor, \
     ExtraTreesRegressor
 from sklearn.externals.six import StringIO
-from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.kernel_ridge import KernelRidge
-from sklearn.linear_model import BayesianRidge, Lasso, LinearRegression, LogisticRegression, SGDRegressor
+from sklearn.linear_model import BayesianRidge, Lasso
 from sklearn.model_selection import cross_val_score, GridSearchCV, KFold, learning_curve, train_test_split, \
     validation_curve, cross_val_predict
-from sklearn.naive_bayes import GaussianNB
-from sklearn.neighbors import KNeighborsRegressor, RadiusNeighborsRegressor
-from sklearn.neural_network import MLPRegressor, BernoulliRBM
-from sklearn.svm import LinearSVR, NuSVR, SVR
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
 from sklearn.tree import DecisionTreeRegressor
-
+from sklearn.decomposition import PCA
 InteractiveShell.ast_node_interactivity = "all"
 warnings.simplefilter(action='ignore', category=FutureWarning)
 rng = np.random.RandomState(42)
 np.random.seed(42)
 # Settings
 
+
+_max_features = 3
+_max_samples = 150
 _v_hash = 0
 _t_hash = 0
 _tr_hash = 0
@@ -46,16 +42,16 @@ _show_plots = True
 _exclude_param_tuning = False
 _exclude_price_trans = False
 _exclude_price_tuning = False
+
+
 _var = ''
 _method = ''
 _range_value = 0
 _table_list_holder = []
 
-
-
 # GLOBALS
 
-_V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = {},{},{},{},{},{},{}
+_V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = {}, {}, {}, {}, {}, {}, {}
 
 main_regressor_list = []
 # Decision Trees
@@ -132,6 +128,7 @@ def print_dataset_stats(data):
     print(data.count())
     print(data.corr())
 
+
 def get_path():
     cwd = os.getcwd()
     sub = cwd.split('/')
@@ -174,30 +171,39 @@ def save_accuracy_log(scores, estimator):
     data.to_csv('../logs/' + str(filename))
 
 
-
 def preprocess(data):
-    if not _exclude_param_tuning:
-        data = data.drop(columns=['first_reg'])
-    if not _exclude_param_tuning:
+
+    def convert_price_to_float(data):
         data['price'] = data['price'].astype(np.float)
+        return data
+
+    def drop_feature(data, features):
+        return data.drop(columns=features)
+
+    def set_
+
+    data = convert_price_to_float()
+    data = drop_feature(data, ['first_reg'])
+
+
         data.set_index('finn_code')
         data['order'] = np.arange(len(data))
 
-        #data = data[data.model_year < 1989]
+        # data = data[data.model_year < 1989]
 
         data['km'] = data['km'].astype(np.float)
 
         data['km'] = np.round(data['km'], 0)
         data['km'] = np.divide(data['km'], 1000)
-        #data['price'] = np.round(data['price'], -3)
+        # data['price'] = np.round(data['price'], -3)
         data['price'] = np.divide(data['price'], 1000)
 
-        if(_range_value > 0 and _var == 'price'):
+        if (_var == 'price'):
             data = data[data.price < _range_value]
         else:
             data = data[data.price < 950]
 
-        if(_var == r'prod\_year'):
+        if (_var == r'prod\_year'):
             data = data[data.model_year > _range_value]
         else:
             data = data[data.model_year > 1982]
@@ -221,18 +227,19 @@ def preprocess(data):
         indices = data[(data['fuel_type'] == 'Bensin') & (data['cylinder'] == 0)].index
         data.drop(indices, inplace=True)
 
-    kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=25)
-    kbins.fit(data.loc[:, 'km'].values.reshape(-1, 1))
-    data['km'] = kbins.transform(data.loc[:, 'km'].values.reshape(-1, 1))
+    # kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=25)
+    # kbins.fit(data.loc[:, 'km'].values.reshape(-1, 1))
+    # data['km'] = kbins.transform(data.loc[:, 'km'].values.reshape(-1, 1))
 
     # global power_transform_price
+    if (_var == 'featureScaling'):
+        min_max = _range_value
+        # mileage_interval = preprocessing.KBinsDiscretizer(n_bins=8, encode='onehot')
+        # data[['km']] = mileage_interval.fit_transform(data[['km']])
+        # data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', #'cylinder']])
 
-    min_max = preprocessing.StandardScaler()
-    # mileage_interval = preprocessing.KBinsDiscretizer(n_bins=8, encode='onehot')
-    # data[['km']] = mileage_interval.fit_transform(data[['km']])
-    # data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', #'cylinder']])
-
-    data[['km', 'power', 'cylinder', 'order']] = min_max.fit_transform(data[['km', 'power', 'cylinder', 'order']])
+        data[['km', 'power', 'cylinder', 'order', 'model_age']] = min_max.fit_transform(
+            data[['km', 'power', 'cylinder', 'order', 'model_age']])
 
     # power_transform_price = preprocessing.power_transform('yeo-johnson')
 
@@ -283,7 +290,8 @@ def preprocess(data):
     data = data.drop(columns=['finn_code'])
     # data = data.drop(columns=['cylinder'])
 
-
+    if _max_features > 0 and _max_samples > 0:
+         data = PCA(n_components=_max_features,).fit_transform(data)
 
     return data
 
@@ -305,12 +313,11 @@ def process_and_label(data, dependant_variable):
     n = len(data.index)
     # Process all data first
 
-
     data = preprocess(data)
 
     all_data = data
 
-    #data = data.sample(frac=1).reset_index(drop=True)  # Shuffle Dataset
+    # data = data.sample(frac=1).reset_index(drop=True)  # Shuffle Dataset
 
     n_post = len(data.index)
     label = data[dependant_variable.name]
@@ -532,21 +539,13 @@ def plot_val_curve(estimator, X, Y):
     plt.show()
 
 
-
-
-
-
-
 # show_boxplot()
 # return V_DATA, V_LABEL, T_DATA, T_LABEL, TR_DATA, TR_LABEL
 def prepare(data, _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL):
-
-    _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = process_and_label(data, dependant_variable=data['price'])
+    _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = process_and_label(data, dependant_variable=data[
+        'price'])
 
     print(hashlib.md5(_TR_DATA.to_msgpack()).hexdigest())
-
-
-
 
     test.assert_not_in('price', _V_DATA.columns), "LABEL DETECTED in Validation DATA!"
     test.assert_not_in('price', _T_DATA.columns), "LABEL DETECTED in Test DATA!"
@@ -554,12 +553,14 @@ def prepare(data, _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL):
 
     return _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data
 
+
 def plot_split():
     df = pd.DataFrame({'n_rows': [len(_V_DATA.values), len(_T_DATA.values), len(_TR_DATA.values)], },
                       index=['Validation (20%)', 'Test (20%)', 'Training (60%)'])
     plot = df.plot.pie(y='n_rows', figsize=(6, 6), )
 
     plt.show()
+
 
 def initial_estimator_comparison():
     def comparee_estimator_results_cv():
@@ -625,8 +626,6 @@ def absolute_error():
             print("Fitting Estimator: %s" % regressor.__class__.__name__)
             regressor.fit(_TR_DATA, _TR_LABEL)
 
-
-
             scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
                                      cv=KFold(n_splits=3, random_state=rng),
                                      n_jobs=8, scoring='neg_median_absolute_error')
@@ -642,69 +641,60 @@ def absolute_error():
     comparee_estimator_results_cv()
 
 
-#absolute_error()
-
-
+# absolute_error()
 
 
 def print_r2_scores(regressor, cv_val_scores, cv_pred_scores, T_LABEL, r2=True, mae=True):
-
     name = regressor.__class__.__name__
     print(name + " = Estimator")
     val_r2_mean = np.round(cv_val_scores.mean(), 3)
     pred_r2_mean = np.round(metrics.r2_score(T_LABEL, cv_pred_scores), 3)
 
-
     print(str(val_r2_mean) + " = mean val. R2")
     print(str(pred_r2_mean) + " = mean test R2")
-   # _table_list.extend([val_r2_mean, pred_r2_mean])
-    return(val_r2_mean, pred_r2_mean)
+    # _table_list.extend([val_r2_mean, pred_r2_mean])
+    return (val_r2_mean, pred_r2_mean)
+
 
 def print_mae_scores(regressor, cv_val_scores, cv_pred_scores, T_LABEL, _TR_LABEL, mae_scores_train):
-
     val_mae_mean = np.round(abs(cv_val_scores.mean()), 2)
     train_mae_mean = np.round(abs(mae_scores_train.mean()), 2)
     pred_mae_mean = np.round(metrics.median_absolute_error(T_LABEL, cv_pred_scores), 2)
 
-
-
     print(str(val_mae_mean) + " = mean val. MAE")
     print(str(pred_mae_mean) + " = mean test MAE")
     _table_list.extend([train_mae_mean, val_mae_mean, pred_mae_mean])
-    return(val_mae_mean, pred_mae_mean)
+    return (val_mae_mean, pred_mae_mean)
 
 
 def store_table_row():
     string = ""
     for item in _table_list:
-        string = string +  str(item) + ' & '
+        string = string + str(item) + ' & '
     _table_list_holder.append(string + r'\\')
     _table_list.clear()
 
 
 def simple_test(action="no action"):
-
-
-
     regressor = DecisionTreeRegressor(random_state=rng)
     regressor.fit(_TR_DATA, _TR_LABEL)
     print("Size _data: " + str(len(_data.index)))
 
     r2_scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
-                             cv=KFold(n_splits=10, random_state=rng),
-                             n_jobs=8, scoring='r2')
+                                cv=KFold(n_splits=10, random_state=rng),
+                                n_jobs=8, scoring='r2')
 
     split = KFold(n_splits=10, random_state=rng)
 
     mae_scores_train = cross_val_score(regressor, _TR_DATA, _TR_LABEL,
+                                       cv=KFold(n_splits=10, random_state=rng),
+                                       n_jobs=8, scoring='neg_median_absolute_error')
+
+    mae_scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
                                  cv=KFold(n_splits=10, random_state=rng),
                                  n_jobs=8, scoring='neg_median_absolute_error')
 
-    mae_scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
-                             cv=KFold(n_splits=10, random_state=rng),
-                             n_jobs=8, scoring='neg_median_absolute_error')
-
-    predictions = cross_val_predict(regressor,_T_DATA, _T_LABEL, n_jobs=8, cv=split)
+    predictions = cross_val_predict(regressor, _T_DATA, _T_LABEL, n_jobs=8, cv=split)
 
     print("--- All car production dates included ---")
     vrm, prm = print_r2_scores(regressor, r2_scores, predictions, _T_LABEL)
@@ -714,15 +704,7 @@ def simple_test(action="no action"):
     _table_list.append(str(tot_len))
     _table_list.append(name)
 
-
-
-
     store_table_row()
-
-
-
-
-
 
 
 # d = {'X': X, 'x': x, 'Y': Y, 'y': y}
@@ -1125,30 +1107,40 @@ clf.best_params_
 # metrics.r2_score(y_true, y_pred[, …]) 	R^2 (coefficient of determination) regression score function.
 
 
-
 filename = get_path()
 
 data, data_orig = load_dataset(filename)
 
-_tune_variables = ['leasePrice']
-_tune_range = [1, 2, 4, 7.5, 8, 10, 12, 15, 25]
-
-for var in _tune_variables:
-    _var = var
-
-    for value in _tune_range:
-        rng = np.random.RandomState(42)
-        np.random.seed(42)
-        _range_value = value
-        _table_list.append(str(_var))
-        _table_list.append('$>' + str(_range_value) + '$')
-        _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = prepare(data, _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL)
-        tot_len = len(_data.index)
-        simple_test()
+_tune = False
+_tune_variables = ['no']
+_tune_range = [preprocessing.StandardScaler(), preprocessing.MinMaxScaler(), preprocessing.PowerTransformer()]
 
 
 
+_V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = \
+    prepare(data, _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL)
 
-for list in _table_list_holder:
-    string_list = list
-    print(string_list.replace(r'& \\', r'\\'))
+rng = np.random.RandomState(42)
+np.random.seed(42)
+if _tune:
+    for var in _tune_variables:
+        _var = var
+
+        for value in _tune_range:
+            rng = np.random.RandomState(42)
+            np.random.seed(42)
+            _range_value = value
+            _table_list.append(str(_var))
+            _table_list.append('$' + str(_range_value.__class__.__name__) + '$')
+            _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = prepare(data, _V_DATA, _V_LABEL, _T_DATA,
+                                                                                       _T_LABEL, _TR_DATA, _TR_LABEL)
+            tot_len = len(_data.index)
+            simple_test()
+
+    for list in _table_list_holder:
+        string_list = list
+        print(string_list.replace(r'& \\', r'\\'))
+
+
+else:
+    simple_test()
