@@ -1,11 +1,16 @@
 import hashlib
 import os
 import warnings
+from time import time
 from datetime import date
-
+from pylatex import Document, Table, Tabular, LongTable, MultiColumn, Subsection, Subsubsection, FlushLeft, Figure, SubFigure
+from sklearn import tree
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from scipy.stats import randint as sp_randint
+from scipy.stats import rv_continuous
+from scipy.stats import rv_discrete
 import sklearn.utils.testing as test
 from IPython.core.interactiveshell import InteractiveShell
 from matplotlib import pyplot as plt
@@ -16,17 +21,19 @@ from sklearn.externals.six import StringIO
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.linear_model import BayesianRidge, Lasso
 from sklearn.model_selection import cross_val_score, GridSearchCV, KFold, learning_curve, train_test_split, \
-    validation_curve, cross_val_predict
+    validation_curve, cross_val_predict, RandomizedSearchCV
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.impute import SimpleImputer
 from sklearn.decomposition import PCA
+
 InteractiveShell.ast_node_interactivity = "all"
 warnings.simplefilter(action='ignore', category=FutureWarning)
 rng = np.random.RandomState(42)
 np.random.seed(42)
 # Settings
-
+pd.options.mode.chained_assignment = None
 
 _max_features = 3
 _max_samples = 150
@@ -42,7 +49,20 @@ _show_plots = True
 _exclude_param_tuning = False
 _exclude_price_trans = False
 _exclude_price_tuning = False
+_dataset_hash = 0
+_dataset_pre_hash = 0
 
+
+_label_detected_d1 = 0
+_label_detected_d2 = 0
+_label_detected_d3 = 0
+_label_detected_d4 = 0
+_label_detected_d5 = 0
+
+
+
+
+_using_trees = False
 
 _var = ''
 _method = ''
@@ -55,27 +75,30 @@ _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = {}, {}, {}, {
 
 main_regressor_list = []
 # Decision Trees
-main_regressor_list.append(DecisionTreeRegressor(random_state=rng))
-main_regressor_list.append(AdaBoostRegressor(DecisionTreeRegressor(random_state=rng)))
+#main_regressor_list.append(AdaBoostRegressor(DecisionTreeRegressor(random_state=rng), random_state=rng, n_estimators=500))
+#main_regressor_list.append(AdaBoostRegressor(DecisionTreeRegressor(random_state=rng)))
 
 # Neighbours
-main_regressor_list.append(KNeighborsRegressor())
+#main_regressor_list.append(KNeighborsRegressor())
 
 # Neural Network
 main_regressor_list.append(MLPRegressor(random_state=rng))
 
 # Kernel Ridge
-main_regressor_list.append(KernelRidge())
+#main_regressor_list.append(KernelRidge())
 
 # Ensemble
-main_regressor_list.append(BaggingRegressor(random_state=rng))
-main_regressor_list.append(RandomForestRegressor(random_state=rng))
-main_regressor_list.append(GradientBoostingRegressor(random_state=rng))
-main_regressor_list.append(ExtraTreesRegressor(random_state=rng))
+#main_regressor_list.append(BaggingRegressor(random_state=rng))
+#main_regressor_list.append(RandomForestRegressor(random_state=rng, n_estimators=500, n_jobs=12))
+#main_regressor_list.append(GradientBoostingRegressor(random_state=rng, n_estimators=250, max_depth=4, max_depth=6,loss='huber'))
+#main_regressor_list.append(ExtraTreesRegressor(random_state=rng))
+
+
+#main_regressor_list.append(AdaBoostRegressor(ExtraTreesRegressor(random_state=rng, n_estimators=500, n_jobs=12), random_state=rng))
 
 # Linear Models
-main_regressor_list.append(BayesianRidge())
-main_regressor_list.append(Lasso(random_state=rng))
+#main_regressor_list.append(BayesianRidge())
+#main_regressor_list.append(Lasso(random_state=rng))
 
 _table_list = []
 _keras = True
@@ -102,6 +125,8 @@ pd.set_option('display.width', 500)
 pd.set_option('display.max_colwidth', -1)
 pd.set_option('display.max_info_columns', 10)
 pd.set_option('use_inf_as_na', True)
+
+
 
 dot_data = StringIO()
 
@@ -146,12 +171,11 @@ def mean_absolute_percentage_error(y_true, y_pred):
 
 def label_encode(data):
     le = preprocessing.LabelEncoder()
-    data['manufacturer'] = le.fit_transform(data['manufacturer'].str.lower())
-    data['model'] = le.fit_transform(data['model'].str.lower())
-    data['gear'] = le.fit_transform(data['gear'].str.lower())
-    data['trans'] = le.fit_transform(data['trans'].str.lower())
-    data['fuel_type'] = le.fit_transform(data['fuel_type'].str.lower())
-
+    data['manufacturer'] = le.fit_transform(data['manufacturer'])
+    data['model'] = le.fit_transform(data['model'])
+    data['gear'] = le.fit_transform(data['gear'])
+    data['trans'] = le.fit_transform(data['trans'])
+    data['fuel_type'] = le.fit_transform(data['fuel_type'])
     data['manufacturer'] = data['manufacturer'].astype('category')
     data['model'] = data['model'].astype('category')
     data['gear'] = data['gear'].astype('category')
@@ -171,75 +195,160 @@ def save_accuracy_log(scores, estimator):
     data.to_csv('../logs/' + str(filename))
 
 
-def preprocess(data):
-
-    def convert_price_to_float(data):
-        data['price'] = data['price'].astype(np.float)
-        return data
-
-    def drop_feature(data, features):
-        return data.drop(columns=features)
-
-    def set_
-
-    data = convert_price_to_float()
-    data = drop_feature(data, ['first_reg'])
+def convert_features_to_float(in_data, features):
+    in_data[features] = in_data[features].astype(np.float)
+    return in_data
 
 
-        data.set_index('finn_code')
-        data['order'] = np.arange(len(data))
+def drop_features(in_data, features):
+    in_data = in_data.drop(columns=[features])
+    return in_data
 
-        # data = data[data.model_year < 1989]
 
-        data['km'] = data['km'].astype(np.float)
+def divide_feature(in_data, feature, divide_amount=1000, round_amount=0):
+    in_data[feature] = in_data[feature].astype(np.float)
+    in_data[feature] = np.round(in_data[feature], round_amount)
+    in_data[feature] = np.divide(in_data[feature], divide_amount)
+    return in_data
 
-        data['km'] = np.round(data['km'], 0)
-        data['km'] = np.divide(data['km'], 1000)
-        # data['price'] = np.round(data['price'], -3)
-        data['price'] = np.divide(data['price'], 1000)
 
-        if (_var == 'price'):
-            data = data[data.price < _range_value]
-        else:
-            data = data[data.price < 950]
+def exclude_feature_more_than(in_data, features, value):
+    in_data = in_data[in_data[features] < value]
+    return in_data
 
-        if (_var == r'prod\_year'):
-            data = data[data.model_year > _range_value]
-        else:
-            data = data[data.model_year > 1982]
+def exclude_feature_less_than(in_data, features, value):
+    in_data = in_data[in_data[features] > value]
+    return in_data
 
-        if (_var == 'leasePrice'):
-            data = data[(((data.model_year >= 2017) & (data.price > _range_value)) | (data.model_year < 2017))]
-        else:
-            data = data[(((data.model_year >= 2017) & (data.price > 15)) | (data.model_year < 2017))]
-        data.loc[data.cylinder > 10, 'cylinder'] = np.round(data.cylinder / 1000)
-        data.loc[data.fuel_type == 'Elektrisitet', 'cylinder'] = 0
-        data = data[data.km < 350]
-        data = data[data.power > 0]
-        data = data[data.power < 500]
-        # if(not _exclude_price_trans):
-        # power_transform_price.fit(data.loc[:, 'price'].values.reshape(-1, 1))
-        # power_transform_price._scaler.with_std = True
-        # data['price'] = power_transform_price.transform(data.loc[:, 'price'].values.reshape(-1, 1))
-        data['model_age'] = (date.today().year - data['model_year'])
-        indices = data[(data['fuel_type'] == 'Diesel') & (data['cylinder'] == 0)].index
-        data.drop(indices, inplace=True)
-        indices = data[(data['fuel_type'] == 'Bensin') & (data['cylinder'] == 0)].index
-        data.drop(indices, inplace=True)
+def simple_impute(in_data, feature):
+    imp = SimpleImputer(missing_values=np.nan, strategy='mean')
+    imp.fit(X=in_data[feature].values.reshape(-1, 1))
+    return_data = imp.transform(in_data[feature].values.reshape(-1, 1))
+    return return_data
+
+def preprocess(df):
+
+    df = drop_features(df, 'first_reg')
+    df = drop_features(df, 'finn_code')
+    # Impute the Mean Cylinder Size on Electrical Cars
+    df.loc[df.fuel_type == 'Elektrisitet', 'cylinder'] = 2.0
+    df.loc[np.isnan(df.cylinder.values), 'cylinder'] = df.cylinder.mean()
+    df.loc[np.isnan(df.cylinder.values), 'cylinder'] = df.cylinder.mean()
+    df1 = df[df.isna().any(axis=1)]
+    print(df1)
+    len_a = len(df.index)
+
+    #df = simple_impute(df, 'cylinder')
+    df = df.dropna()
+    len_b = len(df.index)
+
+    print("Dropped " + str(len_a - len_b) + " NaN Values" )
+
+    #df = label_encode(df)
+    df = convert_features_to_float(df, 'price')
+
+
+
+
+    #Removing Data of First Registration
+
+
+    #Converting Milliliter to Liter
+    df.loc[df.cylinder > 10, 'cylinder'] = np.round(df.cylinder / 1000)
+
+
+
+
+    #Downscale Mileage
+    df = divide_feature(df, 'km', 1000, -3)
+
+    #Downscale Price
+    df['price'] = np.round(df['price'], -3)
+    df['price'] = np.divide(df['price'], 1000)
+
+    #Remove High Mileage (May help exclude work-related vehicles)
+    df = df[df.km < 350]
+    df = df[df.km > 1]
+
+    #Remove Samples with High Engine Power (May help exclude large trucks, buses and luxury vehicles)
+    df = df[df.power < 650]
+
+    #Include Order of Listing as Ordinal Feature
+    #df['order'] = np.arange(len(df))
+
+    #Calculate Age from Year
+    df['model_age'] = (date.today().year - df['model_year'])
+    #df['model_age'] = df['model_age'].astype('category')
+
+    #
+    indices = df[(df['fuel_type'] == 'Diesel') & (df['cylinder'] == 0)].index
+    df.drop(indices, inplace=True)
+    indices = df[(df['fuel_type'] == 'Bensin') & (df['cylinder'] == 0)].index
+    df.drop(indices, inplace=True)
+    if (_var == 'price'):
+        df = exclude_feature_more_than(df, 'price', _range_value)
+    else:
+        df = exclude_feature_more_than(df, 'price', 1000)
+        df = exclude_feature_less_than(df, 'price', 15)
+
+    if (_var == r'prod\_year'):
+        df = exclude_feature_less_than(df, 'model_year', _range_value)
+    else:
+        df = exclude_feature_less_than(df, 'model_year', 1982)
+
+    if not _using_trees:
+        min_max = preprocessing.StandardScaler()
+        df[['km', 'power', 'cylinder', 'model_age']] = min_max.fit_transform(df[['km', 'power', 'cylinder', 'model_age']])
+
+
+
+
+
+    #ce = preprocessing.OrdinalEncoder()
+
+  #  df['model_year'] = df['model_year'].astype('category')
+
+   # df = drop_features(df, 'model_year')
+
+
+
+
+
+    #if (_var == 'leasePrice'):
+    #    df = df[(((df.model_year >= 2017) & (df.price > _range_value)) | (df.model_year    #< 2017))]
+    #else:
+    #    df = df[(((df.model_year >= 2017) & (df.price > 15)) | (df.model_year < 2017))]
+
+    # if(not _exclude_price_trans):
+    # power_transform_price.fit(data.loc[:, 'price'].values.reshape(-1, 1))
+    # power_transform_price._scaler.with_std = True
+    # data['price'] = power_transform_price.transform(data.loc[:, 'price'].values.reshape(-1, 1))
+
+
+
+
 
     # kbins = preprocessing.KBinsDiscretizer(encode='ordinal', n_bins=25)
     # kbins.fit(data.loc[:, 'km'].values.reshape(-1, 1))
     # data['km'] = kbins.transform(data.loc[:, 'km'].values.reshape(-1, 1))
 
     # global power_transform_price
-    if (_var == 'featureScaling'):
-        min_max = _range_value
-        # mileage_interval = preprocessing.KBinsDiscretizer(n_bins=8, encode='onehot')
-        # data[['km']] = mileage_interval.fit_transform(data[['km']])
-        # data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', #'cylinder']])
 
-        data[['km', 'power', 'cylinder', 'order', 'model_age']] = min_max.fit_transform(
-            data[['km', 'power', 'cylinder', 'order', 'model_age']])
+    # mileage_interval = preprocessing.KBinsDiscretizer(n_bins=8, encode='onehot')
+    # data[['km']] = mileage_interval.fit_transform(data[['km']])
+    # data[['km', 'power', 'cylinder']] = min_max.fit_transform(data[['km', 'power', #'cylinder']])
+
+
+    #plt.hist(df.km, alpha=.3, histtype='stepfilled', label='km')
+    #plt.hist(df.power, alpha=.3, histtype='stepfilled', label='power')
+    #plt.hist(df.model_age, alpha=.3, histtype='stepfilled', label='age')
+    #plt.hist(df.cylinder, alpha=.3, histtype='stepfilled', label='cylinder')
+    #plt.hist(df.order, alpha=.3, histtype='step')
+
+    #plt.legend()
+
+    #plt.show()
+
 
     # power_transform_price = preprocessing.power_transform('yeo-johnson')
 
@@ -247,7 +356,19 @@ def preprocess(data):
     # plot_dist(data['model_age'], title='Distribution Before - model_age')
     # data['model_age'] = power_transform_age.fit_transform(data.loc[:, 'model_age'].values.reshape(-1, 1))
 
-    data = data.dropna()
+
+
+
+
+
+
+
+    #plt.show()
+
+
+
+
+
     # imputer = SimpleImputer(missing_values=np.nan, strategy='mean', verbose=2)
     # imputer.fit(data.loc[:, 'cylinder'].values.reshape(-1, 1))
 
@@ -274,26 +395,26 @@ def preprocess(data):
 
     # data['price'] = label.values
 
+
+
+    #df = df.drop(columns=['model'])
+    #df = df.drop(columns=['model_year'])
+    #df = df.drop(columns=['manufacturer'])
+    #df = df.drop(columns=['trans'])
+    #df = df.drop(columns=['gear'])
+    #df = df.drop(columns=['fuel_type'])
+
     # print(data.info(verbose=True))
 
     # data = data.sort_values(by=['km'], axis=0)
 
-    one_hot_cols = ['trans', 'fuel_type', 'gear', 'manufacturer', 'model']  #
-    data = pd.get_dummies(data, columns=one_hot_cols)
+    one_hot_cols = ['trans', 'fuel_type', 'gear', 'manufacturer', 'model', 'model_year']  #
+    df = pd.get_dummies(df, columns=one_hot_cols)
 
-    # data = data.drop(columns=['model'])
-    # data = data.drop(columns=['model_year'])
-    # data = data.drop(columns=['manufacturer'])
-    # data = data.drop(columns=['fuel_type'])
-    # data = data.drop(columns=['gear'])
-    # data = data.drop(columns=['trans'])
-    data = data.drop(columns=['finn_code'])
-    # data = data.drop(columns=['cylinder'])
+    print("--- 10 Random Samples From Dataset ---")
+    print(df.sample(25))
 
-    if _max_features > 0 and _max_samples > 0:
-         data = PCA(n_components=_max_features,).fit_transform(data)
-
-    return data
+    return df
 
 
 def tune_parameter(param, value, data):
@@ -306,43 +427,43 @@ def tune_parameter(param, value, data):
 best_param_score = [0.0, 0.0]
 
 
-def process_and_label(data, dependant_variable):
-    data.index = data.index.astype(int)  # use astype to convert to int
+def process_and_label(in_data, dependant_variable):
+    in_data.index = in_data.index.astype(int)  # use astype to convert to int
     # data = data.sample(1500)
 
-    n = len(data.index)
+    n = len(in_data.index)
     # Process all data first
 
-    data = preprocess(data)
+    out_data = preprocess(in_data)
 
-    all_data = data
+    all_data = out_data
 
     # data = data.sample(frac=1).reset_index(drop=True)  # Shuffle Dataset
 
-    n_post = len(data.index)
-    label = data[dependant_variable.name]
+    n_post = len(out_data.index)
+    label = out_data[dependant_variable.name]
     # Extract VALIDATION data from SOURCE data
-    _V_DATA = data.sample(frac=0.2)
+    _V_DATA = out_data.sample(frac=0.2)
 
     # Extract VALIDATION label from VALIDATION data
     _V_LABEL = _V_DATA[dependant_variable.name]
 
     # Drop VALIDATION data from SOURCE data
-    data = data.drop(_V_DATA.index)
+    out_data = out_data.drop(_V_DATA.index)
 
     # Extract TEST data from SOURCE data
-    _T_DATA = data.sample(frac=0.2)
+    _T_DATA = out_data.sample(frac=0.25)
 
     # Extract TEST label from TEST data
     _T_LABEL = _T_DATA[dependant_variable.name]
 
     # Drop TEST data from SOURCE data
-    data = data.drop(_T_DATA.index)
+    out_data = out_data.drop(_T_DATA.index)
 
     # Assign remainding SOURCE data to TRAINING data
-    _TR_DATA = data
+    _TR_DATA = out_data
 
-    data = all_data
+    out_data = all_data
 
     # Extract TRAINING label from TRAINING data
     _TR_LABEL = _TR_DATA[dependant_variable.name]
@@ -367,7 +488,7 @@ def process_and_label(data, dependant_variable):
     # print(data)
     # data.to_csv('../labeled_cars.csv')
 
-    return _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, data
+    return _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, out_data
 
 
 def plot_price_regression(p, s, title):
@@ -418,25 +539,25 @@ def define_estimator(d, _base_estimator, _meta_estimator, _tune_hyper_parameters
     return _estimator
 
 
-def plot_learning_curve(estimator, title, X, y, ylim=(0.85, 1), cv=None,
-                        n_jobs=None, train_sizes=np.logspace([0.1, 1.0], num=50, stop=1.0, endpoint=True, base=0.01)):
+def plot_learning_curve(estimator, title, X, y, ylim=(-0, -50), cv=10,
+                        n_jobs=16, train_sizes=np.linspace([0.25, 0.75], num=350, stop=1.0, endpoint=True)):
     plt.figure()
     plt.title(title)
     if _exclude_param_tuning:
-        ylim = (0.5, 1)
+        ylim = (0, 50)
     if ylim is not None:
         plt.ylim(*ylim)
     plt.xlabel("Training examples")
     plt.ylabel("Score")
     train_sizes, train_scores, test_scores = learning_curve(
-        estimator, X, y, n_jobs=n_jobs, train_sizes=train_sizes, scoring='r2', random_state=rng)
+        estimator, X, y, n_jobs=n_jobs, train_sizes=train_sizes, scoring='neg_median_absolute_error', random_state=rng)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     test_scores_mean = np.mean(test_scores, axis=1)
     test_scores_std = np.std(test_scores, axis=1)
     plt.ylabel("Score " + str(np.amax(test_scores)))
     plt.grid()
-    plt.xscale('log')
+
 
     plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
                      train_scores_mean + train_scores_std, alpha=0.1,
@@ -449,6 +570,7 @@ def plot_learning_curve(estimator, title, X, y, ylim=(0.85, 1), cv=None,
              label="Cross-validation score")
 
     plt.legend(loc="best")
+    plt.show()
     return plt
 
 
@@ -511,7 +633,7 @@ def show_table_pre_proccesing():
 
 
 def plot_val_curve(estimator, X, Y):
-    param_range = [1, 5, 15, 50]
+    param_range = [1, 25, 100, 350]
     param_name = 'n_estimators'
     train_scores, test_scores = validation_curve(
         estimator, X, Y, param_name=param_name, param_range=param_range, scoring='explained_variance')
@@ -520,7 +642,7 @@ def plot_val_curve(estimator, X, Y):
     test_scores_mean = np.mean(test_scores, axis=1)
     test_scores_std = np.std(test_scores, axis=1)
 
-    plt.title("Validation Curve")
+    plt.title("Validation Curve - " + str(estimator.__class__.__name__))
     plt.xlabel(param_name)
     plt.ylabel("Score")
     plt.ylim(0.0, 1.1)
@@ -545,7 +667,6 @@ def prepare(data, _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL):
     _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = process_and_label(data, dependant_variable=data[
         'price'])
 
-    print(hashlib.md5(_TR_DATA.to_msgpack()).hexdigest())
 
     test.assert_not_in('price', _V_DATA.columns), "LABEL DETECTED in Validation DATA!"
     test.assert_not_in('price', _T_DATA.columns), "LABEL DETECTED in Test DATA!"
@@ -594,7 +715,7 @@ def optimize_estimators():
 
         for regressor in main_regressor_list:
             print("Fitting Estimator: %s" % regressor.__class__.__name__)
-            print(regressor)
+            print(r'\item' + regressor.__class__.__name__)
             regressor.fit(_TR_DATA, _TR_LABEL)
 
             scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
@@ -616,25 +737,176 @@ def optimize_estimators():
 
     comparee_estimator_results_cv()
 
-
-def absolute_error():
+def report(results, est, n_top=3):
+    for i in range(1, n_top + 1):
+        candidates = np.flatnonzero(results['rank_test_score'] == i)
+        for candidate in candidates:
+            print("Model with rank: {0}".format(i))
+            print(est.__class__.__name__)
+            print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
+                  results['mean_test_score'][candidate],
+                  results['std_test_score'][candidate]))
+            print("Parameters: {0}".format(results['params'][candidate]))
+            print(candidate)
+            print("")
+def compare_regressors(regressor_list):
     def comparee_estimator_results_cv():
         score_list = []
         estimator_list = []
 
-        for regressor in main_regressor_list:
-            print("Fitting Estimator: %s" % regressor.__class__.__name__)
-            regressor.fit(_TR_DATA, _TR_LABEL)
+        use_default_params = True
+        use_random_state = True
+        use_latex_reporting = True
+        sec = Subsubsection('Estimator Parameters')
+        with sec.create(Table(position='!ht')) as table:
+            with sec.create(LongTable('l | l | l | l | l | l | l', row_height=1.15)) as data_table:
+                data_table.add_hline()
+                data_table.add_row(["Estimator", "Crit.", "N Est.", "Max Depth", "Min. Split", "Leaf Weight", "Max Feat."])
+                data_table.add_hline()
+                data_table.end_table_header()
+                for regressor in regressor_list:
+                    print(r'    \item ' + regressor.__class__.__name__)
+                    # print("Fitting Estimator: %s" % regressor.__class__.__name__)
+                    regressor = regressor.fit(_TR_DATA, _TR_LABEL)
 
-            scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
-                                     cv=KFold(n_splits=3, random_state=rng),
-                                     n_jobs=8, scoring='neg_median_absolute_error')
-            print(scores)
-            score_list.append(abs(np.round(np.mean(scores), 1)))
-            estimator_list.append(regressor.__class__.__name__ + ' ' + str(abs(np.round(np.median(scores), 1))))
+                    #param_dist = {"max_depth": [15,20,25,30,45,50,70,100,250, None],
+                                 # "max_features": ['auto', 'sqrt', 'log2', None, 3, 4, 6, 8],
+                                 # "min_samples_split": sp_randint(2, 4),
+                                 # "min_impurity_decrease": [0.01, 0.0],
+                                 # "min_weight_fraction_leaf": [0.01, 0.0],
+                                 # "bootstrap": [True, False],
+                                 # "n_estimators": [10, 50, 150, 250,500, 750],
+                                 # "criterion": ["mse", "mae"]}
+
+                    param_dist = {
+                                  "max_depth": sp_randint(2,50),
+                                  "max_features": sp_randint(2, 10),
+                                  "n_estimators": sp_randint(2,500)}
+
+                    random_search = RandomizedSearchCV(regressor, param_distributions=param_dist,
+                                                           n_iter=10, cv=3, verbose=1, n_jobs=12,scoring='neg_median_absolute_error')
+
+                    start = time()
+                    random_search.fit(_V_DATA, _V_LABEL)
+                    print("RandomizedSearchCV took %.2f seconds for %d candidates"
+                      " parameter settings." % ((time() - start), 10))
+                    print(random_search.best_estimator_)
+                    print(random_search.best_score_)
+                    print(random_search.best_params_)
+                    report(random_search.cv_results_, regressor)
+
+                    scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
+                                             cv=KFold(n_splits=10, random_state=rng),
+                                             n_jobs=8, scoring='neg_median_absolute_error')
+                    # print(scores)
+                    score_list.append(np.round(np.mean(scores), 3))
+                    estimator_list.append(regressor.__class__.__name__ + ': ' + str(np.round((np.mean(scores)), 3)))
+
+                    best_regressor = random_search.best_estimator_
+
+                    data_table.add_hline()
+                    params = regressor.get_params()
+
+                    data_table.add_row([regressor.__class__.__name__, params.get('criterion'),
+                                        params.get('n_estimators'),
+                                        params.get('max_depth'),
+                                        params.get('min_samples_split'),
+                                        params.get('min_weight_fraction_leaf'),
+                                        params.get('max_features'),])
+
+                    #plot_learning_curve(regressor, 'Learning Curve', _TR_DATA, _TR_LABEL)
+
+                    predictions = cross_val_predict(best_regressor, _T_DATA, _T_LABEL, n_jobs=8, cv=10)
+
+                    pred_mae_mean = np.round(metrics.median_absolute_error(_T_LABEL, predictions), 2)
+                    print('Best Regressor:' + str(best_regressor))
+                    print('Predicted MAE: ' + str(np.mean(pred_mae_mean)))
+
+                table.add_caption('Default Estimator (hyper) Parameters')
+
+        print(sec.dumps())
+        print(r'\end{enumerate}')
         sns.set(style="whitegrid")
         sns.barplot(y=estimator_list, x=score_list)
-        plt.xlabel('Avg. Absolute Median Error in 1000 NOK: %0.4f' % np.mean(score_list))
+        plt.title('10-Fold CV - Avg. Median Abs. Error = %0.4f'  % np.mean(score_list))
+        plt.xlabel('1000 NOK')
+        plt.legend()
+        plt.show()
+
+
+
+    comparee_estimator_results_cv()
+
+def neural_net(regressor_list):
+    def comparee_estimator_results_cv():
+        score_list = []
+        estimator_list = []
+
+        use_default_params = True
+        use_random_state = True
+        use_latex_reporting = True
+        sec = Subsubsection('Estimator Parameters')
+        with sec.create(Table(position='!ht')) as table:
+            with sec.create(LongTable('l | l | l | l | l | l | l', row_height=1.15)) as data_table:
+                data_table.add_hline()
+                data_table.add_row(
+                    ["Estimator", "Crit.", "N Est.", "Max Depth", "Min. Split", "Leaf Weight", "Max Feat."])
+                data_table.add_hline()
+                data_table.end_table_header()
+                for regressor in regressor_list:
+                    print(r'    \item ' + regressor.__class__.__name__)
+                    # print("Fitting Estimator: %s" % regressor.__class__.__name__)
+                    regressor = regressor.fit(_TR_DATA, _TR_LABEL)
+
+                    param_dist = {"activation": ['logistic', 'relu'],
+                     "solver": ['sgd'],
+                     "hidden_layer_sizes": [(190,)],
+                     "batch_size": [256]}
+
+
+
+                    random_search = RandomizedSearchCV(regressor, param_distributions=param_dist,
+                                                       n_iter=10, cv=3, verbose=1, n_jobs=12,
+                                                       scoring='neg_median_absolute_error')
+
+                    start = time()
+                    random_search.fit(_V_DATA, _V_LABEL)
+                    print("RandomizedSearchCV took %.2f seconds for %d candidates"
+                          " parameter settings." % ((time() - start), 10))
+                    print(random_search.best_estimator_)
+                    print(random_search.best_score_)
+                    print(random_search.best_params_)
+                    report(random_search.cv_results_, regressor)
+
+                    scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
+                                             cv=KFold(n_splits=10, random_state=rng),
+                                             n_jobs=8, scoring='neg_median_absolute_error')
+                    # print(scores)
+                    score_list.append(np.round(np.mean(scores), 3))
+                    estimator_list.append(regressor.__class__.__name__ + ': ' + str(np.round((np.mean(scores)), 3)))
+
+                    best_regressor = random_search.best_estimator_
+
+                    data_table.add_hline()
+                    params = regressor.get_params()
+
+
+                    # plot_learning_curve(regressor, 'Learning Curve', _TR_DATA, _TR_LABEL)
+
+                    predictions = cross_val_predict(best_regressor, _T_DATA, _T_LABEL, n_jobs=8, cv=10)
+
+                    pred_mae_mean = np.round(metrics.median_absolute_error(_T_LABEL, predictions), 2)
+                    print('Best Regressor:' + str(best_regressor))
+                    print('Predicted MAE: ' + str(np.mean(pred_mae_mean)))
+
+                table.add_caption('Default Estimator (hyper) Parameters')
+
+        print(sec.dumps())
+        print(r'\end{enumerate}')
+        sns.set(style="whitegrid")
+        sns.barplot(y=estimator_list, x=score_list)
+        plt.title('10-Fold CV - Avg. Median Abs. Error = %0.4f' % np.mean(score_list))
+        plt.xlabel('1000 NOK')
         plt.legend()
         plt.show()
 
@@ -676,30 +948,31 @@ def store_table_row():
 
 
 def simple_test(action="no action"):
-    regressor = DecisionTreeRegressor(random_state=rng)
-    regressor.fit(_TR_DATA, _TR_LABEL)
+    regressor_test = GradientBoostingRegressor(random_state=rng, loss='huber', max_depth=4, max_features=6, n_estimators=308)
+    regressor_test = regressor_test.fit(_TR_DATA, _TR_LABEL)
     print("Size _data: " + str(len(_data.index)))
 
-    r2_scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
+    r2_scores = cross_val_score(regressor_test, _V_DATA, _V_LABEL,
                                 cv=KFold(n_splits=10, random_state=rng),
-                                n_jobs=8, scoring='r2')
+                                n_jobs=12, scoring='r2')
 
     split = KFold(n_splits=10, random_state=rng)
 
-    mae_scores_train = cross_val_score(regressor, _TR_DATA, _TR_LABEL,
+    mae_scores_train = cross_val_score(regressor_test, _TR_DATA, _TR_LABEL,
                                        cv=KFold(n_splits=10, random_state=rng),
-                                       n_jobs=8, scoring='neg_median_absolute_error')
+                                       n_jobs=12, scoring='neg_median_absolute_error')
 
-    mae_scores = cross_val_score(regressor, _V_DATA, _V_LABEL,
+    mae_scores = cross_val_score(regressor_test, _V_DATA, _V_LABEL,
                                  cv=KFold(n_splits=10, random_state=rng),
-                                 n_jobs=8, scoring='neg_median_absolute_error')
+                                 n_jobs=12, scoring='neg_median_absolute_error')
 
-    predictions = cross_val_predict(regressor, _T_DATA, _T_LABEL, n_jobs=8, cv=split)
+    predictions = cross_val_predict(regressor_test, _T_DATA, _T_LABEL, n_jobs=12, cv=split)
 
+    #print(tree.export_graphviz(regressor_test, feature_names=_TR_DATA.columns,filled=True,out_file='/home/promobyte/tree.dot'))
     print("--- All car production dates included ---")
-    vrm, prm = print_r2_scores(regressor, r2_scores, predictions, _T_LABEL)
-    vmm, pmm = print_mae_scores(regressor, mae_scores, predictions, _T_LABEL, _TR_LABEL, mae_scores_train)
-    name = regressor.__class__.__name__
+    vrm, prm = print_r2_scores(regressor_test, r2_scores, predictions, _T_LABEL)
+    vmm, pmm = print_mae_scores(regressor_test, mae_scores, predictions, _T_LABEL, _TR_LABEL, mae_scores_train)
+    name = regressor_test.__class__.__name__
 
     _table_list.append(str(tot_len))
     _table_list.append(name)
@@ -1111,18 +1384,49 @@ filename = get_path()
 
 data, data_orig = load_dataset(filename)
 
+_dataset_pre_hash = hashlib.md5(data.to_msgpack()).hexdigest()
+
 _tune = False
-_tune_variables = ['no']
-_tune_range = [preprocessing.StandardScaler(), preprocessing.MinMaxScaler(), preprocessing.PowerTransformer()]
 
+_V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = prepare(data, _V_DATA, _V_LABEL, _T_DATA, _T_LABEL,
+                                                                           _TR_DATA, _TR_LABEL)
 
+_dataset_hash = hashlib.md5(_data.to_msgpack()).hexdigest()
+_v_hash = hashlib.md5(_V_DATA.to_msgpack()).hexdigest()
+_t_hash = hashlib.md5(_T_DATA.to_msgpack()).hexdigest()
+_tr_hash = hashlib.md5(_TR_DATA.to_msgpack()).hexdigest()
 
-_V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = \
-    prepare(data, _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL)
+if 'price' in data_orig.columns:
+    _label_detected_d1 = 1
+else:
+    _label_detected_d1 = 0
+
+if 'price' in _data.columns:
+    _label_detected_d2 = 1
+else:
+    _label_detected_d2 = 0
+
+if 'price' in _TR_DATA.columns:
+    _label_detected_d3 = 1
+else:
+    _label_detected_d3 = 0
+
+if 'price' in _V_DATA.columns:
+    _label_detected_d4 = 1
+else:
+    _label_detected_d4 = 0
+
+if 'price' in _T_DATA.columns:
+    _label_detected_d5 = 1
+else:
+    _label_detected_d5 = 0
+
 
 rng = np.random.RandomState(42)
 np.random.seed(42)
 if _tune:
+    _tune_variables = ['price']
+    _tune_range = [2000, 1600, 1200, 950, 650, 350, 200]
     for var in _tune_variables:
         _var = var
 
@@ -1131,7 +1435,7 @@ if _tune:
             np.random.seed(42)
             _range_value = value
             _table_list.append(str(_var))
-            _table_list.append('$' + str(_range_value.__class__.__name__) + '$')
+            _table_list.append('$' + str(_range_value) + '$')
             _V_DATA, _V_LABEL, _T_DATA, _T_LABEL, _TR_DATA, _TR_LABEL, _data = prepare(data, _V_DATA, _V_LABEL, _T_DATA,
                                                                                        _T_LABEL, _TR_DATA, _TR_LABEL)
             tot_len = len(_data.index)
@@ -1143,4 +1447,53 @@ if _tune:
 
 
 else:
-    simple_test()
+
+    neural_net(main_regressor_list)
+    #compare_regressors(main_regressor_list)
+
+    geometry_options = {
+        "margin": "2.54cm",
+        "includeheadfoot": True
+    }
+
+    "Title "
+
+def print_integrity_check():
+    sec = Subsubsection('Integrity Check')
+    with sec.create(Table(position='!ht')) as table:
+        with sec.create(LongTable('l | l | l | l', row_height=1.33)) as data_table:
+            data_table.add_row(["Datasets", "Integrity (MD5)", "Rows", "Has Dependent Variable"])
+            data_table.add_hline()
+
+            data_table.end_table_header()
+            data_table.add_row(['Imported Dataset', str(_dataset_pre_hash), str(len(data_orig.index)), str(_label_detected_d1)])
+            data_table.add_row(['Processed Dataset', str(_dataset_hash), str(len(_data.index)), str(_label_detected_d2)])
+            data_table.add_row(['Training Data', str(_tr_hash), str(len(_TR_DATA.index)), str(_label_detected_d3)])
+            data_table.add_row(['Validation Data', str(_v_hash), str(len(_V_DATA.index)), str(_label_detected_d4)])
+            data_table.add_row(['Test Data', str(_t_hash), str(len(_T_DATA.index)), str(_label_detected_d5)])
+
+            data_table.add_hline()
+            data_table.add_row((MultiColumn(4, align='c',
+                                            data='Random Seed: ' + str(rng.get_state()[1][0])),))
+            data_table.add_hline()
+
+        table.add_caption('Integrity check, describing a healthy environment')
+
+    print(sec.dumps())
+
+
+print_integrity_check()
+
+def print_data_check():
+    sample_count=10
+    caption=""
+    print(_TR_DATA.sample(sample_count).to_latex(longtable=True).replace('\n', '\n\\caption{10 Random Samples From Training Data.}\\\\\n', 1))
+
+    print(_TR_LABEL.sample(sample_count).to_latex(longtable=True).replace('\n', '\n\\caption{10 Random Samples From Training Label.}\\\\\n', 1))
+
+
+
+print_data_check()
+
+
+
