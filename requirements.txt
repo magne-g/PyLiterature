@@ -9,7 +9,7 @@ keyring==10.6.0
 keyrings.alt==3.0
 kiwisolver==1.0.1
 matplotlib==2.2.3
-numpy==1.16.0
+numpy==1.22.0
 pandas==0.24.0
 pycairo==1.16.2
 pycrypto==2.6.1
